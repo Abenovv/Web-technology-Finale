@@ -313,9 +313,21 @@ main {
 
 .home-game-grid,
 .game-worlds {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  --worlds-per-row: 5;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--card-gap);
+}
+
+.home-game-grid > *,
+.game-worlds > * {
+  flex: 0 0
+    calc(
+      (100% - (var(--worlds-per-row) - 1) * var(--card-gap)) /
+        var(--worlds-per-row)
+    );
+  min-width: 0;
 }
 
 .game-card {
@@ -435,15 +447,7 @@ main {
   }
   .home-game-grid,
   .game-worlds {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
-  .home-game-grid > *,
-  .game-worlds > * {
-    grid-column: span 2;
-  }
-  .home-game-grid > :nth-child(4),
-  .game-worlds > :nth-child(4) {
-    grid-column: 2 / span 2;
+    --worlds-per-row: 3;
   }
 }
 
@@ -475,15 +479,7 @@ main {
   }
   .home-game-grid,
   .game-worlds {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  .home-game-grid > :nth-child(4),
-  .game-worlds > :nth-child(4) {
-    grid-column: span 2;
-  }
-  .home-game-grid > :nth-child(5),
-  .game-worlds > :nth-child(5) {
-    grid-column: 2 / span 2;
+    --worlds-per-row: 2;
   }
 }
 
