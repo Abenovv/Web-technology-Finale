@@ -4,7 +4,13 @@
     U = window.UI,
     route = document.querySelector("#route"),
     photo = document.querySelector("#photo-stop"),
-    lore = document.querySelector("#lore-stop");
+    lore = document.querySelector("#lore-stop"),
+    preview = document.querySelector("#route-image");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  preview.addEventListener("load", () => {
+    if (!reducedMotion.matches)
+      preview.animate([{ opacity: 0.6 }, { opacity: 1 }], 220);
+  });
   const requested = new URLSearchParams(location.search).get("route");
   if ([...route.options].some((o) => o.value === requested))
     route.value = requested;
@@ -23,12 +29,10 @@
         lore.checked,
       ),
       trail = document.querySelector("#trail"),
-      session = S.sessions.find((item) => item.id === route.value),
-      preview = document.querySelector("#route-image");
+      session = S.sessions.find((item) => item.id === route.value);
     const source = `assets/images/${session.image}.webp`;
     if (preview.getAttribute("src") !== source) preview.src = source;
     preview.alt = S.artwork[session.image];
-    document.querySelector("#route-caption").textContent = session.description;
     trail.replaceChildren();
     const stops = ["Valley gate", session.title.split(": ")[1]];
     if (photo.checked) stops.push("Photo stop");
@@ -43,8 +47,8 @@
         ? `${people} participant${people === 1 ? "" : "s"} · ${minutes} minutes each · ${people * minutes} participant-minutes`
         : "Choose 1 to 6 participants to calculate the group estimate.";
   }
-  [route, photo, lore, document.querySelector("#booking-people")].forEach(
-    (el) => el.addEventListener("input", update),
+  [photo, lore, document.querySelector("#booking-people")].forEach((el) =>
+    el.addEventListener("input", update),
   );
   route.addEventListener("change", update);
   function showSaved() {

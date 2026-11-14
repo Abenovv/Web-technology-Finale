@@ -76,7 +76,7 @@ for (const colorScheme of ["light", "dark"])
               if (document.documentElement.scrollWidth > innerWidth + 1)
                 errors.push("horizontal overflow");
               document.querySelectorAll("img").forEach((img) => {
-                if (!img.alt || !img.complete || !img.naturalWidth)
+                if (!img.hasAttribute("alt") || !img.complete || !img.naturalWidth)
                   errors.push("image " + img.src);
               });
               const ids = [...document.querySelectorAll("[id]")].map(
@@ -154,6 +154,28 @@ for (const colorScheme of ["light", "dark"])
           { colorScheme, viewport: { width, height: 900 } },
         ));
     }
+test("Mobile menu closes with Escape and restores focus", () =>
+  scenario("index.html", async (page) => {
+    const menu = page.getByRole("button", { name: "Toggle navigation" });
+    await menu.press("Enter");
+    const games = page.locator("#main-navigation a[href='games.html']");
+    await games.press("Escape");
+    await page.waitForFunction(() => document.querySelector(".navbar-toggler").getAttribute("aria-expanded") === "false");
+    assert.ok(await menu.evaluate((element) => element === document.activeElement));
+  }, { viewport: { width: 375, height: 740 }, reducedMotion: "reduce" }));
+
+test("Studio discipline artwork filters tasks and follows the select", () =>
+  scenario("studio.html", async (page) => {
+    const testing = page.locator('[data-discipline="Testing"]');
+    await testing.press("Enter");
+    assert.equal(await testing.getAttribute("aria-pressed"), "true");
+    assert.equal(await page.locator("#discipline").inputValue(), "Testing");
+    assert.equal(await page.locator("#roadmap article").count(), 2);
+    await page.locator("#discipline").selectOption("Art");
+    assert.equal(await page.locator('[data-discipline="Art"]').getAttribute("aria-pressed"), "true");
+    assert.equal(await testing.getAttribute("aria-pressed"), "false");
+  }));
+
 test("Theme toggle uses the keyboard and wins over the OS after reload and navigation", () =>
   scenario(
     "index.html",

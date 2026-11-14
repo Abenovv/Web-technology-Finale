@@ -10,8 +10,8 @@ Run `npm start` in the project root and open `http://127.0.0.1:8768/`. The site 
 
 - On any page, open the navigation and toggle **Dark mode**. It follows the device until you choose a mode. The chosen mode persists across the site.
 - On **Our games**, save a session or filter the catalogue to saved sessions. The **Saved** link shows the count and takes you to the Home list. Remove sessions one at a time or clear the list. The total adds each saved session’s duration.
-- On **Emberwake**, choose Broken bridges to see the new route illustration. The route preview and total update when the selection changes. Photo stop and valley memories add 10 and 15 minutes.
-- On **Community**, build an evening plan and save playtest preferences locally. On **Studio**, select roadmap tasks and set hours per week. The schedule rounds selected hours divided by weekly capacity up to a whole week. Task selections and capacity persist after reload.
+- On **Emberwake**, switch routes to see the corresponding illustration. Photo stop and valley memories add 10 and 15 minutes.
+- On **Community**, build an evening plan and save playtest preferences locally. On **Studio**, filter tasks with the Design, Art, Code and Testing cards. The workload estimate divides selected hours by weekly capacity and rounds up. The selections persist after reload.
 
 The three demo forms validate their fields inline and save the resulting plan on the visitor’s device. The success message confirms what was stored. Email and phone fields are validated without storing or transmitting their values.
 
@@ -35,5 +35,5 @@ The suite checks all five pages in both themes at 375, 768 and 1280 px. It also 
 
 - Bootstrap 5.3.8 (MIT) provides the local grid, navigation and form components. jQuery 3.7.1 (MIT) provides sliding help panels, fading feedback and smooth scrolling. Their licenses are in `assets/vendor/`.
 - DM Sans by Colophon Foundry is used under the SIL Open Font License. The license is in `assets/fonts/`.
-- OpenAI image generation created the concept artwork, including the broken bridge, community postcard table and Studio workbench added in the Final.
+- OpenAI image generation was used for the game scenes, community and workbench illustrations, Studio discipline illustrations and project icon.
 - The team directed the design and development and used an AI coding tool for implementation, testing and documentation. Playwright and Prettier support development.

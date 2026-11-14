@@ -5,18 +5,26 @@
   const taskKey = "sidequest-production-tasks";
   const capacityKey = "sidequest-weekly-capacity";
   const capacity = document.querySelector("#weekly-capacity");
+  const disciplineFilter = document.querySelector("#discipline");
+  const disciplineCards = document.querySelectorAll("[data-discipline]");
   const storedCapacity = U.read(capacityKey, 5);
   if ([2, 5, 10, 15].includes(storedCapacity)) capacity.value = storedCapacity;
   let selected = U.readIds(taskKey, S.tasks);
   function render() {
-    const discipline = document.querySelector("#discipline").value,
+    const discipline = disciplineFilter.value,
       found = S.tasks.filter(
         (t) => discipline === "all" || t.discipline === discipline,
       ),
       host = document.querySelector("#roadmap");
     host.replaceChildren();
+    disciplineCards.forEach((card) => {
+      card.setAttribute(
+        "aria-pressed",
+        String(card.dataset.discipline === discipline),
+      );
+    });
     document.querySelector("#task-count").textContent =
-      `${found.length} proposed tasks`;
+      `${found.length} ${found.length === 1 ? "task" : "tasks"}`;
     found.forEach((t) => {
       const card = U.element("article", undefined, "roadmap-card");
       card.append(
@@ -63,7 +71,15 @@
       U.notice("Your browser could not remember the weekly hours for later.");
     updateTotal();
   });
-  document.querySelector("#discipline").addEventListener("change", render);
+  disciplineFilter.addEventListener("change", render);
+  disciplineCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const discipline = card.dataset.discipline;
+      disciplineFilter.value =
+        disciplineFilter.value === discipline ? "all" : discipline;
+      render();
+    });
+  });
   document.querySelector("#reset-production").addEventListener("click", () => {
     if (!U.write(taskKey, [])) {
       U.notice("Your browser could not clear the task selection.");

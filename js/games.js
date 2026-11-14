@@ -49,7 +49,7 @@
     );
   }
   function render() {
-    const saved = U.savedIds();
+    const saved = savedOnly.checked ? U.savedIds() : [];
     const found = S.filterSessions(
         search.value,
         genre.value,
@@ -59,12 +59,17 @@
     host.replaceChildren();
     document.querySelector("#game-count").textContent =
       `${found.length} of ${S.sessions.length} sessions`;
-    document.querySelector("#catalog-empty").hidden = Boolean(found.length);
+    const empty = document.querySelector("#catalog-empty");
+    empty.hidden = Boolean(found.length);
+    empty.textContent =
+      savedOnly.checked && !saved.length
+        ? "Save a session to see it here."
+        : "No matches. Try another search or reset the filters.";
     found.forEach((s) => {
       const card = U.sessionCard(s),
         button = U.element(
           "button",
-          compared.includes(s.id) ? "Selected for comparison" : "Compare",
+          compared.includes(s.id) ? "Comparing" : "Compare",
           "button compare-button",
         );
       button.setAttribute("aria-label", `Compare ${s.title}`);
@@ -93,14 +98,22 @@
     if (focusedSave)
       (document.querySelector("#catalog [data-save]") || savedOnly).focus();
   });
-  document.querySelector("#reset-filters").addEventListener("click", () => {
+  function resetFilters() {
     search.value = "";
     genre.value = "all";
     sort.value = "title";
     savedOnly.checked = false;
     render();
+  }
+  document.querySelector("#reset-filters").addEventListener("click", () => {
+    resetFilters();
     search.focus();
   });
+  for (const link of document.querySelectorAll(".game-world")) {
+    link.addEventListener("click", () => {
+      if (!document.getElementById(link.hash.slice(1))) resetFilters();
+    });
+  }
   render();
   if (location.hash)
     document.getElementById(location.hash.slice(1))?.scrollIntoView();

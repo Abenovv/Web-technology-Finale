@@ -1,62 +1,121 @@
 .home-hero {
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
-  padding: 42px 0;
+  align-items: end;
+  min-height: clamp(390px, 46vw, 575px);
+  margin-block: 24px 12px;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 16px;
+  background: #1f1b1a;
 }
 
-.hero-copy p {
-  color: var(--muted);
-}
-
-.hero-copy .eyebrow {
-  color: var(--orange);
+.home-hero::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    #171515 4%,
+    #171515ed 22%,
+    #17151570 55%,
+    #17151510
+  );
 }
 
 .hero-image {
-  margin: 0;
-}
-
-.hero-image img {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
   width: 100%;
-  aspect-ratio: 1.5;
+  height: 100%;
   object-fit: cover;
-  border-radius: 6px;
+  object-position: center 53%;
 }
 
-.hero-image figcaption {
-  color: var(--muted);
-  font-size: 13px;
-  margin-top: 10px;
+.hero-copy {
+  padding: clamp(28px, 5vw, 64px);
+  color: #fffaf4;
+}
+
+.hero-copy h1 {
+  max-width: 9ch;
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 6.2rem);
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+}
+
+.hero-copy h1 span {
+  color: #ff9c73;
+}
+
+.hero-copy p {
+  max-width: 35ch;
+  margin: 20px 0 22px;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: #f0dcd3;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+}
+
+.hero-actions .button {
+  --orange: #ff9c73;
+  --accent-hover: #ffb996;
+  --on-accent: #211a19;
+}
+
+.hero-link,
+.hero-link:hover {
+  color: #fffaf4;
+  text-decoration-line: underline;
+  text-underline-offset: 0.2em;
 }
 
 .home-game-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
 }
 
-@media (max-width: 991px) {
-  .home-hero {
-    gap: 25px;
-  }
-  .home-game-grid {
-    gap: 15px;
-  }
-  .home-game-grid .card-body {
-    padding: 15px;
-  }
+.home-game-grid .card-body p {
+  margin-bottom: 0;
 }
 
-@media (max-width: 575px) {
-  .home-hero {
-    grid-template-columns: 1fr;
-    gap: 25px;
-    padding: 30px 0;
+.home-game-grid .game-card {
+  border-radius: 12px;
+}
+
+.home-game-grid .game-card h3 a {
+  text-decoration: none;
+}
+
+.home-game-grid .game-card h3 a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+@media (max-width: 767px) {
+  .home-hero::after {
+    background: linear-gradient(0deg, #171515 3%, #171515dc 36%, #17151538 85%);
   }
+
+  .home-hero {
+    min-height: 420px;
+  }
+
+  .hero-image {
+    object-position: 61% center;
+  }
+
   .home-game-grid {
     grid-template-columns: 1fr;
-    gap: 22px;
   }
 }

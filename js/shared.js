@@ -112,7 +112,12 @@
   }
   function updateSavedControls() {
     const ids = savedIds();
-    document.querySelector("#nav-saved-count").textContent = ids.length;
+    const count = document.querySelector("#nav-saved-count");
+    if (count.textContent !== String(ids.length)) {
+      count.textContent = ids.length;
+      count.classList.remove("count-changed");
+      requestAnimationFrame(() => count.classList.add("count-changed"));
+    }
     document.querySelectorAll("[data-save]").forEach((button) => {
       const saved = ids.includes(button.dataset.save),
         session = S.sessions.find((s) => s.id === button.dataset.save);
@@ -146,11 +151,25 @@
     $("html, body")
       .stop(true)
       .animate(
-        { scrollTop: target.getBoundingClientRect().top + window.scrollY },
+        { scrollTop: 0 },
         speed,
       );
     target.setAttribute("tabindex", "-1");
     target.focus({ preventScroll: true });
+  });
+
+  const navigation = document.querySelector("#main-navigation");
+  const menu = document.querySelector(".navbar-toggler");
+  navigation.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !navigation.classList.contains("show")) return;
+    bootstrap.Collapse.getOrCreateInstance(navigation, { toggle: false }).hide();
+    menu.focus();
+  });
+  navigation.querySelectorAll('a[href*="#"]').forEach((link) => {
+    link.addEventListener("click", () => {
+      if (!navigation.classList.contains("show")) return;
+      bootstrap.Collapse.getOrCreateInstance(navigation, { toggle: false }).hide();
+    });
   });
   function reveal(node) {
     $(node).stop(true, true).removeAttr("hidden").hide().fadeIn(speed);

@@ -3,8 +3,14 @@
   const artwork = {
     emberwake: "Golden ruins in a mountain valley",
     "broken-bridges": "A broken stone bridge over a river in an autumn valley",
+    "emberwake-memories":
+      "An explorer approaching an arch lit by fragments of amber light",
     "orbit-post": "A courier on a colourful moon",
+    "moon-garden": "A courier tending a greenhouse on a violet moon",
+    "lost-parcel": "A courier reaching for a parcel above moon-rock terraces",
     "after-hours": "A noodle shop on a rainy street",
+    "last-customer":
+      "A customer at the lit counter of a noodle shop on a rainy night",
   };
   const sessions = [
     {
@@ -31,7 +37,7 @@
       world: "Emberwake",
       genre: "adventure",
       minutes: 60,
-      image: "emberwake",
+      image: "emberwake-memories",
       description:
         "Trace three memories to discover why the valley went quiet.",
     },
@@ -50,7 +56,7 @@
       world: "Orbit Post",
       genre: "cozy",
       minutes: 35,
-      image: "orbit-post",
+      image: "moon-garden",
       description: "Help the residents grow a garden between mail deliveries.",
     },
     {
@@ -59,7 +65,7 @@
       world: "Orbit Post",
       genre: "cozy",
       minutes: 40,
-      image: "orbit-post",
+      image: "lost-parcel",
       description: "Follow a parcel across tiny planets and make new friends.",
     },
     {
@@ -78,7 +84,7 @@
       world: "After Hours",
       genre: "puzzle",
       minutes: 50,
-      image: "after-hours",
+      image: "last-customer",
       description: "Piece together the last customer’s story before sunrise.",
     },
   ];
