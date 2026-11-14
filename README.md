@@ -36,4 +36,4 @@ The suite checks all five pages in both themes at 375, 768 and 1280 px. It also 
 - Bootstrap 5.3.8 (MIT) provides the local grid, navigation and form components. jQuery 3.7.1 (MIT) provides sliding help panels, fading feedback and smooth scrolling. Their licenses are in `assets/vendor/`.
 - DM Sans by Colophon Foundry is used under the SIL Open Font License. The license is in `assets/fonts/`.
 - OpenAI image generation created the concept artwork, including the broken bridge, community postcard table and Studio workbench added in the Final.
-- OpenAI Codex assisted with HTML, CSS and JavaScript, verification, the report and packaging. Playwright and Prettier support development.
+- The team directed the design and development and used an AI coding tool for implementation, testing and documentation. Playwright and Prettier support development.
