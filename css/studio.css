@@ -6,17 +6,14 @@
   height: 100%;
 }
 
-.team-initials {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 65px;
-  height: 65px;
+.team-portrait {
+  display: block;
+  width: 88px;
+  height: 88px;
+  object-fit: cover;
   border-radius: 50%;
   background: var(--tag);
-  color: var(--orange);
-  font-size: 23px;
-  font-weight: 700;
+  border: 1px solid var(--line);
   margin-bottom: 20px;
 }
 
