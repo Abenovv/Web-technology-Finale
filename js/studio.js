@@ -2,7 +2,12 @@
   "use strict";
   const S = window.Sidequest,
     U = window.UI;
-  let selected = [];
+  const taskKey = "sidequest-production-tasks";
+  const capacityKey = "sidequest-weekly-capacity";
+  const capacity = document.querySelector("#weekly-capacity");
+  const storedCapacity = U.read(capacityKey, 5);
+  if ([2, 5, 10, 15].includes(storedCapacity)) capacity.value = storedCapacity;
+  let selected = U.readIds(taskKey, S.tasks);
   function render() {
     const discipline = document.querySelector("#discipline").value,
       found = S.tasks.filter(
@@ -26,9 +31,15 @@
       input.checked = selected.includes(t.id);
       input.setAttribute("aria-label", `Include ${t.title}`);
       input.addEventListener("change", () => {
-        selected = input.checked
+        const next = input.checked
           ? [...selected, t.id]
           : selected.filter((id) => id !== t.id);
+        if (!U.write(taskKey, next)) {
+          input.checked = !input.checked;
+          U.notice("Your browser could not save the task selection.");
+          return;
+        }
+        selected = next;
         updateTotal();
       });
       label.append(input, document.createTextNode(" Include in estimate"));
@@ -39,11 +50,25 @@
   }
   function updateTotal() {
     const tasks = S.tasks.filter((t) => selected.includes(t.id));
+    const total = S.total(tasks, "hours");
     document.querySelector("#production-total").textContent =
-      `${tasks.length} selected tasks · ${S.total(tasks, "hours")} estimated hours`;
+      `${tasks.length} selected tasks · ${total} estimated hours`;
+    const weeks = Math.ceil(total / Number(capacity.value));
+    document.querySelector("#production-weeks").textContent = weeks
+      ? `About ${weeks} ${weeks === 1 ? "week" : "weeks"} at ${capacity.value} hours per week.`
+      : "Select tasks to estimate how many weeks they will take.";
   }
+  capacity.addEventListener("change", () => {
+    if (!U.write(capacityKey, Number(capacity.value)))
+      U.notice("Your browser could not remember the weekly hours for later.");
+    updateTotal();
+  });
   document.querySelector("#discipline").addEventListener("change", render);
   document.querySelector("#reset-production").addEventListener("click", () => {
+    if (!U.write(taskKey, [])) {
+      U.notice("Your browser could not clear the task selection.");
+      return;
+    }
     selected = [];
     render();
   });

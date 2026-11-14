@@ -1,27 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="SIDEQUEST student game studio website: About us. IT-2511, Web Technologies 1."
-    />
-    <meta name="theme-color" content="#151615" />
+      content="SIDEQUEST student game studio website: About us. IT-2511, Web Technologies 1.">
+    <meta name="theme-color" content="#151615">
     <title>About us | SIDEQUEST</title>
-    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link
       rel="preload"
       href="assets/fonts/dm-sans-regular.woff2"
       as="font"
       type="font/woff2"
-      crossorigin
-    />
-    <link rel="stylesheet" href="assets/vendor/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
+      crossorigin>
+    <link rel="stylesheet" href="assets/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
-    <link rel="stylesheet" href="css/studio.css" />
-    <link rel="stylesheet" href="css/endterm.css" />
+    <link rel="stylesheet" href="css/studio.css">
+    <link rel="stylesheet" href="css/endterm.css">
+    <script src="js/theme.js"></script>
     <script src="assets/vendor/bootstrap.bundle.min.js" defer></script>
     <script src="assets/vendor/jquery-3.7.1.min.js" defer></script>
     <script src="js/data.js" defer></script>
@@ -36,8 +35,7 @@
           <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
             <path
               d="M12 2h8v10h10v8H20v10h-8V20H2v-8h10z"
-              fill="currentColor"
-            />
+              fill="currentColor" />
           </svg>
           <span> SIDEQUEST </span>
         </a>
@@ -71,20 +69,48 @@
           </ul>
           <a class="nav-link detail-nav" href="emberwake.html">Emberwake</a
           ><a class="nav-cta" href="community.html#playtest">Plan a session</a>
+          <div class="nav-tools">
+            <a class="nav-link nav-saved" href="index.html#saved-sessions"
+              >Saved <span id="nav-saved-count">0</span></a
+            >
+            <button
+              type="button"
+              id="theme-toggle"
+              class="theme-toggle"
+              aria-pressed="true"
+            >
+              Dark mode
+            </button>
+          </div>
         </div>
       </nav>
     </header>
     <main id="main">
-      <section class="shell page-top" aria-labelledby="studio-title">
-        <h1 id="studio-title">About SIDEQUEST</h1>
-        <p class="intro">
-          We are a team of three students from IT-2511. SIDEQUEST is our game
-          development studio concept for Web Technologies 1.
-        </p>
-        <p>
-          We chose this topic because we enjoy games and wanted to introduce
-          several ideas in one website.
-        </p>
+      <section
+        class="shell page-top feature-intro"
+        aria-labelledby="studio-title"
+      >
+        <div>
+          <h1 id="studio-title">About SIDEQUEST</h1>
+          <p class="intro">
+            We are a team of three students from IT-2511. SIDEQUEST is our game
+            development studio concept for Web Technologies 1.
+          </p>
+          <p>
+            We chose this topic because we enjoy games and wanted to introduce
+            several ideas in one website.
+          </p>
+        </div>
+        <figure class="feature-art">
+          <img
+            src="assets/images/studio-workbench.webp"
+            alt="Sketchbook and a miniature stone bridge on a game artist’s workbench"
+            width="1200"
+            height="800">
+          <figcaption>
+            Concept art for the path from sketch to playable level.
+          </figcaption>
+        </figure>
       </section>
       <section class="shell section-pad rule" aria-labelledby="team-title">
         <h2 id="team-title">Our team</h2>
@@ -133,9 +159,9 @@
         <h2 id="credits-title">Credits</h2>
         <ul class="credit-list">
           <li>
-            <strong>Endterm implementation:</strong> OpenAI Codex assisted with
-            JavaScript, HTML/CSS changes, automated checks, packaging and this
-            report.
+            <strong>Endterm and Final implementation:</strong> OpenAI Codex
+            assisted with JavaScript, HTML/CSS changes, automated checks,
+            packaging and this report.
           </li>
           <li>
             <strong>Effects:</strong> jQuery 3.7.1, MIT license, used for
@@ -144,12 +170,13 @@
           </li>
           <li>
             <strong>Session content:</strong> eight concept sessions expand the
-            three Midterm worlds. Variants reuse the corresponding original
-            world artwork; these images are not gameplay screenshots.
+            three Midterm worlds. The illustrations depict those game concepts.
           </li>
           <li>
             <strong> Game artwork: </strong>
-            original concept images made with OpenAI image generation.
+            OpenAI image generation produced the original artwork and the Final
+            illustrations of the broken bridge, community table and studio
+            workbench.
           </li>
           <li>
             <strong> Font: </strong>
@@ -181,7 +208,7 @@
         </ul>
         <a
           class="button"
-          href="https://github.com/Abenovv/EndTerm-WebTechnology"
+          href="https://github.com/Abenovv/Web-technology-Finale"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -205,7 +232,23 @@
           </select>
           <p id="task-count" role="status"></p>
           <div id="roadmap" class="roadmap-grid"></div>
-          <p id="production-total" role="status"></p>
+          <div class="workload-summary">
+            <div>
+              <label class="form-label" for="weekly-capacity"
+                >Available hours per week</label
+              >
+              <select class="form-select" id="weekly-capacity">
+                <option value="2">2 hours</option>
+                <option value="5" selected>5 hours</option>
+                <option value="10">10 hours</option>
+                <option value="15">15 hours</option>
+              </select>
+            </div>
+            <div>
+              <p id="production-total" role="status"></p>
+              <p id="production-weeks" role="status"></p>
+            </div>
+          </div>
           <button class="button secondary" id="reset-production">
             Reset task selection
           </button>
@@ -237,8 +280,7 @@
                   required
                   autocomplete="name"
                   minlength="2"
-                  maxlength="60"
-                />
+                  maxlength="60">
                 <p
                   class="field-error"
                   id="collaboration-name-error"
@@ -256,8 +298,7 @@
                   aria-describedby="collaboration-email-error"
                   required
                   autocomplete="email"
-                  maxlength="120"
-                />
+                  maxlength="120">
                 <p
                   class="field-error"
                   id="collaboration-email-error"
@@ -297,8 +338,7 @@
                   aria-describedby="collaboration-hours-error"
                   required
                   min="1"
-                  max="20"
-                />
+                  max="20">
                 <p
                   class="field-error"
                   id="collaboration-hours-error"
@@ -314,8 +354,7 @@
                   id="collaboration-start"
                   name="start"
                   aria-describedby="collaboration-start-error"
-                  required
-                />
+                  required>
                 <p
                   class="field-error"
                   id="collaboration-start-error"
@@ -350,8 +389,7 @@
                   id="collaboration-consent"
                   name="consent"
                   aria-describedby="collaboration-consent-error"
-                  required
-                />
+                  required>
                 <p
                   class="field-error"
                   id="collaboration-consent-error"
@@ -404,14 +442,13 @@
               <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
                 <path
                   d="M12 2h8v10h10v8H20v10h-8V20H2v-8h10z"
-                  fill="currentColor"
-                />
+                  fill="currentColor" />
               </svg>
               <span> SIDEQUEST </span>
             </a>
             <p class="footer-description">
               A student game development project.
-              <br />
+              <br>
               IT-2511 · Web Technologies 1
             </p>
           </div>
@@ -420,7 +457,7 @@
             <a href="community.html"> Community </a>
             <a href="studio.html"> The studio </a>
             <a
-              href="https://github.com/Abenovv/EndTerm-WebTechnology"
+              href="https://github.com/Abenovv/Web-technology-Finale"
               target="_blank"
               rel="noopener noreferrer"
             >

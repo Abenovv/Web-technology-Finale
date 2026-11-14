@@ -58,16 +58,17 @@
       notice(
         "This browser could not save your choice. Allow local storage and try again.",
       );
-      return;
+      return false;
     }
     document.dispatchEvent(new Event("shortlist-change"));
+    return true;
   }
   function sessionCard(session, heading = "h3") {
     const card = element("article", undefined, "game-card");
     card.id = session.id;
     const image = document.createElement("img");
     image.src = `assets/images/${session.image}.webp`;
-    image.alt = `${session.world} concept artwork: ${session.image === "emberwake" ? "golden ruins in a mountain valley" : session.image === "orbit-post" ? "a courier on a colourful moon" : "a noodle shop on a rainy street"}`;
+    image.alt = S.artwork[session.image];
     image.width = 1200;
     image.height = 800;
     image.loading = "lazy";
@@ -109,8 +110,9 @@
     card.append(body);
     return card;
   }
-  document.addEventListener("shortlist-change", () => {
+  function updateSavedControls() {
     const ids = savedIds();
+    document.querySelector("#nav-saved-count").textContent = ids.length;
     document.querySelectorAll("[data-save]").forEach((button) => {
       const saved = ids.includes(button.dataset.save),
         session = S.sessions.find((s) => s.id === button.dataset.save);
@@ -121,6 +123,13 @@
         `${saved ? "Remove" : "Save"} ${session.title}`,
       );
     });
+  }
+  updateSavedControls();
+  document.addEventListener("shortlist-change", updateSavedControls);
+  window.addEventListener("storage", (event) => {
+    if (event.key === "sidequest-sessions" || event.key === null) {
+      document.dispatchEvent(new Event("shortlist-change"));
+    }
   });
   // Finish the previous effect and clear its queue before a repeated click.
   $(".help-toggle").on("click", function () {
@@ -194,6 +203,7 @@
       const result = onValid(data);
       if (!result.ok) {
         feedback.textContent = result.message;
+        feedback.classList.add("feedback-error");
         reveal(feedback);
         return;
       }
@@ -206,6 +216,7 @@
         document.getElementById(field.id + "-error").textContent = "";
       });
       form.dispatchEvent(new Event("local-save"));
+      feedback.classList.remove("feedback-error");
       feedback.textContent = result.message;
       reveal(feedback);
     });
@@ -226,10 +237,11 @@
     } catch {
       /* Browsing still works when storage is unavailable. */
     }
+    document.dispatchEvent(new Event("shortlist-change"));
     refresh();
     document.addEventListener("shortlist-change", refresh);
     wishlist.addEventListener("click", () => {
-      toggleSaved("emberwake");
+      if (!toggleSaved("emberwake")) return;
       document.querySelector("#wishlist-message").textContent =
         savedIds().includes("emberwake")
           ? "Saved on this device."

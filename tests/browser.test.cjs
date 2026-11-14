@@ -2,7 +2,7 @@ const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const path = require("node:path");
 const fs = require("node:fs");
-const { chromium, expect } = require("playwright");
+const { chromium } = require("playwright");
 const serve = require("./serve.cjs");
 let browser, server, base;
 const root = path.resolve(__dirname, "..");
@@ -50,89 +50,233 @@ async function scenario(url, fn, options = {}) {
     await context.close();
   }
 }
-for (const width of [375, 768, 1280])
-  for (const file of pages) {
-    test(`Layout and accessibility: ${file} at ${width}px`, () =>
-      scenario(
-        file,
-        async (page) => {
-          await page.evaluate(() => {
-            document
-              .querySelectorAll("img")
-              .forEach((img) => (img.loading = "eager"));
-            return document.fonts.ready;
-          });
-          await page.waitForFunction(() =>
-            [...document.images].every((img) => img.complete),
-          );
-          assert.equal(await page.locator("h1").count(), 1);
-          const issues = await page.evaluate(() => {
-            const errors = [];
-            if (document.documentElement.scrollWidth > innerWidth + 1)
-              errors.push("horizontal overflow");
-            document.querySelectorAll("img").forEach((img) => {
-              if (!img.alt || !img.complete || !img.naturalWidth)
-                errors.push("image " + img.src);
-            });
-            const ids = [...document.querySelectorAll("[id]")].map(
-              (el) => el.id,
-            );
-            if (new Set(ids).size !== ids.length) errors.push("duplicate IDs");
-            const current = document.querySelectorAll(
-              'header a[aria-current="page"]',
-            );
-            if (current.length !== 1)
-              errors.push("current nav count " + current.length);
-            let level = 0;
-            document
-              .querySelectorAll("main h1,main h2,main h3")
-              .forEach((h) => {
-                const next = Number(h.tagName[1]);
-                if (next > level + 1) errors.push("heading jump");
-                level = next;
-              });
-            document.querySelectorAll("input,select,textarea").forEach((el) => {
-              if (!el.labels?.length && !el.getAttribute("aria-label"))
-                errors.push("unlabelled field");
-            });
-            return errors;
-          });
-          assert.deepEqual(issues, []);
-          await page.keyboard.press("Tab");
-          assert.equal(
-            await page.evaluate(() =>
-              document.activeElement.textContent.trim(),
-            ),
-            "Skip to content",
-          );
-          assert.notEqual(
-            await page.evaluate(
-              () => getComputedStyle(document.activeElement).outlineStyle,
-            ),
-            "none",
-          );
-          if (width < 992) {
-            await page
-              .getByRole("button", { name: "Toggle navigation" })
-              .click();
-            await page.waitForFunction(() =>
+for (const colorScheme of ["light", "dark"])
+  for (const width of [375, 768, 1280])
+    for (const file of pages) {
+      test(`Layout and accessibility: ${file} at ${width}px in ${colorScheme}`, () =>
+        scenario(
+          file,
+          async (page) => {
+            await page.evaluate(() => {
               document
-                .querySelector("#main-navigation")
-                .classList.contains("show"),
+                .querySelectorAll("img")
+                .forEach((img) => (img.loading = "eager"));
+              return document.fonts.ready;
+            });
+            await page.waitForFunction(() =>
+              [...document.images].every((img) => img.complete),
             );
-          }
-          for (const link of await page.locator("header a").all())
-            assert.ok(await link.isVisible());
-          for (const control of await page
-            .locator("main button,main input,main select,main textarea,main a")
-            .all()) {
-            if ((await control.isVisible()) && (await control.isEnabled()))
-              assert.ok(await control.evaluate((el) => el.tabIndex >= 0));
-          }
-        },
-        { viewport: { width, height: 900 } },
-      ));
-  }
+            assert.equal(await page.locator("h1").count(), 1);
+            assert.equal(
+              await page.locator("html").getAttribute("data-bs-theme"),
+              colorScheme,
+            );
+            const issues = await page.evaluate(() => {
+              const errors = [];
+              if (document.documentElement.scrollWidth > innerWidth + 1)
+                errors.push("horizontal overflow");
+              document.querySelectorAll("img").forEach((img) => {
+                if (!img.alt || !img.complete || !img.naturalWidth)
+                  errors.push("image " + img.src);
+              });
+              const ids = [...document.querySelectorAll("[id]")].map(
+                (el) => el.id,
+              );
+              if (new Set(ids).size !== ids.length)
+                errors.push("duplicate IDs");
+              const current = document.querySelectorAll(
+                'header a[aria-current="page"]',
+              );
+              if (current.length !== 1)
+                errors.push("current nav count " + current.length);
+              let level = 0;
+              document
+                .querySelectorAll("main h1,main h2,main h3")
+                .forEach((h) => {
+                  const next = Number(h.tagName[1]);
+                  if (next > level + 1) errors.push("heading jump");
+                  level = next;
+                });
+              document
+                .querySelectorAll("input,select,textarea")
+                .forEach((el) => {
+                  if (!el.labels?.length && !el.getAttribute("aria-label"))
+                    errors.push("unlabelled field");
+                });
+              return errors;
+            });
+            assert.deepEqual(issues, []);
+            await page.keyboard.press("Tab");
+            assert.equal(
+              await page.evaluate(() =>
+                document.activeElement.textContent.trim(),
+              ),
+              "Skip to content",
+            );
+            assert.notEqual(
+              await page.evaluate(
+                () => getComputedStyle(document.activeElement).outlineStyle,
+              ),
+              "none",
+            );
+            if (width < 992) {
+              await page
+                .getByRole("button", { name: "Toggle navigation" })
+                .click();
+              await page.waitForFunction(() =>
+                document
+                  .querySelector("#main-navigation")
+                  .classList.contains("show"),
+              );
+            }
+            for (const link of await page.locator("header a").all())
+              assert.ok(await link.isVisible());
+            const nav = await page.locator(".site-header nav").boundingBox();
+            for (const control of await page
+              .locator("header nav a, header nav button")
+              .all()) {
+              const box = await control.boundingBox();
+              if (box)
+                assert.ok(
+                  box.x >= nav.x - 1 &&
+                    box.x + box.width <= nav.x + nav.width + 1,
+                );
+            }
+            for (const control of await page
+              .locator(
+                "main button,main input,main select,main textarea,main a",
+              )
+              .all()) {
+              if ((await control.isVisible()) && (await control.isEnabled()))
+                assert.ok(await control.evaluate((el) => el.tabIndex >= 0));
+            }
+          },
+          { colorScheme, viewport: { width, height: 900 } },
+        ));
+    }
+test("Theme toggle uses the keyboard and wins over the OS after reload and navigation", () =>
+  scenario(
+    "index.html",
+    async (page) => {
+      const toggle = page.getByRole("button", { name: "Dark mode" });
+      await toggle.focus();
+      await page.keyboard.press("Space");
+      assert.equal(await toggle.getAttribute("aria-pressed"), "true");
+      assert.equal(
+        await page.locator("html").getAttribute("data-bs-theme"),
+        "dark",
+      );
+      await page.reload();
+      assert.equal(await toggle.getAttribute("aria-pressed"), "true");
+      for (const file of pages.slice(1)) {
+        await page.goto(`${base}/${file}`);
+        assert.equal(
+          await page.locator("html").getAttribute("data-bs-theme"),
+          "dark",
+        );
+      }
+      assert.equal(
+        await page.evaluate(() =>
+          JSON.parse(localStorage.getItem("sidequest-theme")),
+        ),
+        "dark",
+      );
+    },
+    { colorScheme: "light" },
+  ));
+
+test("Save in Games, filter to saved, remove on Home, and clear across pages", () =>
+  scenario("games.html", async (page) => {
+    await page
+      .getByRole("button", { name: "Save Emberwake: First light", exact: true })
+      .click();
+    await page
+      .getByRole("button", {
+        name: "Save Orbit Post: First delivery",
+        exact: true,
+      })
+      .click();
+    assert.equal(await page.locator("#nav-saved-count").textContent(), "2");
+    await page.getByLabel("Saved sessions only").check();
+    assert.equal(await page.locator("#catalog article").count(), 2);
+    await page.locator(".nav-saved").click();
+    await page.waitForLoadState("domcontentloaded");
+    assert.equal(
+      await page.locator("#saved-total").textContent(),
+      "2 saved · 50 minutes in total",
+    );
+    await page.reload();
+    await page
+      .locator("#saved-games")
+      .getByRole("button", {
+        name: "Remove Emberwake: First light",
+        exact: true,
+      })
+      .click();
+    assert.equal(
+      await page.locator("#saved-total").textContent(),
+      "1 saved · 20 minutes in total",
+    );
+    await page.locator("#clear-games").click();
+    assert.ok(await page.locator("#clear-games").isDisabled());
+    await page.goto(`${base}/games.html`);
+    assert.equal(await page.locator("#nav-saved-count").textContent(), "0");
+    await page.getByLabel("Saved sessions only").check();
+    assert.ok(await page.locator("#catalog-empty").isVisible());
+  }));
+
+test("Emberwake displays the bridge illustration for the matching route", () =>
+  scenario("emberwake.html", async (page) => {
+    await page
+      .getByLabel("Route", { exact: true })
+      .selectOption("emberwake-bridges");
+    assert.equal(
+      await page.locator("#route-total").textContent(),
+      "Your trail: 45 minutes",
+    );
+    const illustration = page.locator("#route-image");
+    await illustration.scrollIntoViewIfNeeded();
+    assert.equal(
+      await illustration.getAttribute("src"),
+      "assets/images/broken-bridges.webp",
+    );
+    assert.match(
+      await illustration.getAttribute("alt"),
+      /broken stone bridge/i,
+    );
+    await page.waitForFunction(
+      () => document.querySelector("#route-image").naturalWidth === 1200,
+    );
+  }));
+
+test("Studio estimates weeks from selected tasks and remembers the workload", () =>
+  scenario("studio.html", async (page) => {
+    await page.locator("#roadmap input").first().check();
+    const firstTotal = await page.locator("#production-total").textContent();
+    const hours = Number(firstTotal.match(/(\d+) estimated hours/)[1]);
+    await page.getByLabel("Available hours per week").selectOption("2");
+    const weeks = Math.ceil(hours / 2);
+    assert.equal(
+      await page.locator("#production-weeks").textContent(),
+      `About ${weeks} ${weeks === 1 ? "week" : "weeks"} at 2 hours per week.`,
+    );
+    await page.reload();
+    assert.ok(await page.locator("#roadmap input").first().isChecked());
+    assert.equal(
+      await page.getByLabel("Available hours per week").inputValue(),
+      "2",
+    );
+    await page.locator("#reset-production").click();
+    await page.reload();
+    assert.equal(
+      await page.locator("#roadmap input").first().isChecked(),
+      false,
+    );
+    assert.match(
+      await page.locator("#production-weeks").textContent(),
+      /Select tasks/,
+    );
+  }));
 test("Internal links and fragments resolve on every page", async () => {
   for (const file of pages)
     await scenario(file, async (page, context) => {

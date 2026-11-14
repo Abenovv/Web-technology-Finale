@@ -37,20 +37,13 @@
   margin-bottom: 8px;
 }
 
-.playtest-form .form-control, .playtest-form .form-select {
-  background-color: #f4f4f4;
-  color: #20252a;
-  border-color: #858e98;
-  min-height: 44px;
-}
-
 .playtest-form .form-check-label {
   font-size: 13px;
 }
 
 .playtest-form .form-check-input:checked {
-  background-color: #a64520;
-  border-color: #a64520;
+  background-color: var(--orange);
+  border-color: var(--orange);
 }
 
 .optional, .form-note {

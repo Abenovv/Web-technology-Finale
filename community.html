@@ -1,27 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="SIDEQUEST student game studio website: Community. IT-2511, Web Technologies 1."
-    />
-    <meta name="theme-color" content="#151615" />
+      content="SIDEQUEST student game studio website: Community. IT-2511, Web Technologies 1.">
+    <meta name="theme-color" content="#151615">
     <title>Community | SIDEQUEST</title>
-    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link
       rel="preload"
       href="assets/fonts/dm-sans-regular.woff2"
       as="font"
       type="font/woff2"
-      crossorigin
-    />
-    <link rel="stylesheet" href="assets/vendor/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
+      crossorigin>
+    <link rel="stylesheet" href="assets/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
-    <link rel="stylesheet" href="css/community.css" />
-    <link rel="stylesheet" href="css/endterm.css" />
+    <link rel="stylesheet" href="css/community.css">
+    <link rel="stylesheet" href="css/endterm.css">
+    <script src="js/theme.js"></script>
     <script src="assets/vendor/bootstrap.bundle.min.js" defer></script>
     <script src="assets/vendor/jquery-3.7.1.min.js" defer></script>
     <script src="js/data.js" defer></script>
@@ -36,8 +35,7 @@
           <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
             <path
               d="M12 2h8v10h10v8H20v10h-8V20H2v-8h10z"
-              fill="currentColor"
-            />
+              fill="currentColor" />
           </svg>
           <span> SIDEQUEST </span>
         </a>
@@ -71,17 +69,42 @@
           </ul>
           <a class="nav-link detail-nav" href="emberwake.html">Emberwake</a
           ><a class="nav-cta" href="community.html#playtest">Plan a session</a>
+          <div class="nav-tools">
+            <a class="nav-link nav-saved" href="index.html#saved-sessions"
+              >Saved <span id="nav-saved-count">0</span></a
+            >
+            <button
+              type="button"
+              id="theme-toggle"
+              class="theme-toggle"
+              aria-pressed="true"
+            >
+              Dark mode
+            </button>
+          </div>
         </div>
       </nav>
     </header>
     <main id="main">
-      <section class="shell page-top">
-        <p class="eyebrow">Come for the games. Stay for the people.</p>
-        <h1>Our community</h1>
-        <p class="intro">
-          Plan a concept session, find an activity and tell us how you like to
-          play. All plans stay on your device.
-        </p>
+      <section class="shell page-top feature-intro">
+        <div>
+          <p class="eyebrow">Come for the games. Stay for the people.</p>
+          <h1>Our community</h1>
+          <p class="intro">
+            Plan a concept session, find an activity and tell us how you like to
+            play. All plans stay on your device.
+          </p>
+        </div>
+        <figure class="feature-art">
+          <img
+            src="assets/images/community-table.webp"
+            alt="Visitors sketch on postcards beside a bowl of ramen in a rainy café"
+            width="1200"
+            height="800">
+          <figcaption>
+            After Hours concept art for the community story circle.
+          </figcaption>
+        </figure>
       </section>
       <section class="shell section-pad rule">
         <h2>Build your evening</h2>
@@ -102,8 +125,7 @@
               type="search"
               class="form-control"
               id="activity-search"
-              maxlength="100"
-            />
+              maxlength="100">
           </div>
         </div>
         <p id="activity-count" role="status"></p>
@@ -143,8 +165,7 @@
                   required
                   autocomplete="name"
                   minlength="2"
-                  maxlength="60"
-                />
+                  maxlength="60">
                 <p
                   class="field-error"
                   id="preferences-name-error"
@@ -162,8 +183,7 @@
                   aria-describedby="preferences-email-error"
                   required
                   autocomplete="email"
-                  maxlength="120"
-                />
+                  maxlength="120">
                 <p
                   class="field-error"
                   id="preferences-email-error"
@@ -224,8 +244,7 @@
                   required
                   min="15"
                   max="180"
-                  step="5"
-                />
+                  step="5">
                 <p
                   class="field-error"
                   id="preferences-minutes-error"
@@ -258,8 +277,7 @@
                   id="preferences-consent"
                   name="consent"
                   aria-describedby="preferences-consent-error"
-                  required
-                />
+                  required>
                 <p
                   class="field-error"
                   id="preferences-consent-error"
@@ -316,14 +334,13 @@
               <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
                 <path
                   d="M12 2h8v10h10v8H20v10h-8V20H2v-8h10z"
-                  fill="currentColor"
-                />
+                  fill="currentColor" />
               </svg>
               <span> SIDEQUEST </span>
             </a>
             <p class="footer-description">
               A student game development project.
-              <br />
+              <br>
               IT-2511 · Web Technologies 1
             </p>
           </div>
@@ -332,7 +349,7 @@
             <a href="community.html"> Community </a>
             <a href="studio.html"> The studio </a>
             <a
-              href="https://github.com/Abenovv/EndTerm-WebTechnology"
+              href="https://github.com/Abenovv/Web-technology-Finale"
               target="_blank"
               rel="noopener noreferrer"
             >

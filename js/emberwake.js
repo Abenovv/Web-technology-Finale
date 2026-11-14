@@ -22,12 +22,15 @@
         photo.checked,
         lore.checked,
       ),
-      trail = document.querySelector("#trail");
+      trail = document.querySelector("#trail"),
+      session = S.sessions.find((item) => item.id === route.value),
+      preview = document.querySelector("#route-image");
+    const source = `assets/images/${session.image}.webp`;
+    if (preview.getAttribute("src") !== source) preview.src = source;
+    preview.alt = S.artwork[session.image];
+    document.querySelector("#route-caption").textContent = session.description;
     trail.replaceChildren();
-    const stops = [
-      "Valley gate",
-      S.sessions.find((s) => s.id === route.value).title.split(": ")[1],
-    ];
+    const stops = ["Valley gate", session.title.split(": ")[1]];
     if (photo.checked) stops.push("Photo stop");
     if (lore.checked) stops.push("Valley memories");
     stops.push("Campfire");

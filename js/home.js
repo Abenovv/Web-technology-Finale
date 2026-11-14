@@ -42,6 +42,7 @@
     const sessions = S.sessions.filter((s) => U.savedIds().includes(s.id)),
       list = document.querySelector("#saved-games");
     list.replaceChildren();
+    document.querySelector("#clear-games").disabled = !sessions.length;
     if (!sessions.length)
       list.append(
         U.element(
@@ -54,6 +55,11 @@
       sessions.forEach((s) => {
         const card = U.sessionCard(s);
         card.id = "saved-" + s.id;
+        card.querySelector("[data-save]").addEventListener("click", () => {
+          const next = list.querySelector("[data-save]");
+          if (next) next.focus();
+          else document.querySelector("#saved-total").focus();
+        });
         list.append(card);
       });
     document.querySelector("#saved-total").textContent =

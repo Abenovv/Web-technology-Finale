@@ -5,7 +5,8 @@
   let compared = [];
   const search = document.querySelector("#search"),
     genre = document.querySelector("#genre"),
-    sort = document.querySelector("#sort");
+    sort = document.querySelector("#sort"),
+    savedOnly = document.querySelector("#saved-only");
   function comparison() {
     const host = document.querySelector("#comparison");
     host.replaceChildren();
@@ -48,7 +49,12 @@
     );
   }
   function render() {
-    const found = S.filterSessions(search.value, genre.value, sort.value),
+    const saved = U.savedIds();
+    const found = S.filterSessions(
+        search.value,
+        genre.value,
+        sort.value,
+      ).filter((session) => !savedOnly.checked || saved.includes(session.id)),
       host = document.querySelector("#catalog");
     host.replaceChildren();
     document.querySelector("#game-count").textContent =
@@ -79,10 +85,19 @@
   search.addEventListener("input", render);
   genre.addEventListener("change", render);
   sort.addEventListener("change", render);
+  savedOnly.addEventListener("change", render);
+  document.addEventListener("shortlist-change", () => {
+    if (!savedOnly.checked) return;
+    const focusedSave = document.activeElement?.matches("[data-save]");
+    render();
+    if (focusedSave)
+      (document.querySelector("#catalog [data-save]") || savedOnly).focus();
+  });
   document.querySelector("#reset-filters").addEventListener("click", () => {
     search.value = "";
     genre.value = "all";
     sort.value = "title";
+    savedOnly.checked = false;
     render();
     search.focus();
   });

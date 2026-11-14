@@ -1,5 +1,11 @@
 (function (root) {
   "use strict";
+  const artwork = {
+    emberwake: "Golden ruins in a mountain valley",
+    "broken-bridges": "A broken stone bridge over a river in an autumn valley",
+    "orbit-post": "A courier on a colourful moon",
+    "after-hours": "A noodle shop on a rainy street",
+  };
   const sessions = [
     {
       id: "emberwake",
@@ -16,7 +22,7 @@
       world: "Emberwake",
       genre: "adventure",
       minutes: 45,
-      image: "emberwake",
+      image: "broken-bridges",
       description: "Reconnect the old bridges using clues in the stonework.",
     },
     {
@@ -285,6 +291,7 @@
     return "";
   }
   const api = {
+    artwork,
     sessions,
     activities,
     tasks,

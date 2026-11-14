@@ -1,27 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="SIDEQUEST student game studio website: Emberwake. IT-2511, Web Technologies 1."
-    />
-    <meta name="theme-color" content="#151615" />
+      content="SIDEQUEST student game studio website: Emberwake. IT-2511, Web Technologies 1.">
+    <meta name="theme-color" content="#151615">
     <title>Emberwake | SIDEQUEST</title>
-    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link
       rel="preload"
       href="assets/fonts/dm-sans-regular.woff2"
       as="font"
       type="font/woff2"
-      crossorigin
-    />
-    <link rel="stylesheet" href="assets/vendor/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
+      crossorigin>
+    <link rel="stylesheet" href="assets/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
-    <link rel="stylesheet" href="css/emberwake.css" />
-    <link rel="stylesheet" href="css/endterm.css" />
+    <link rel="stylesheet" href="css/emberwake.css">
+    <link rel="stylesheet" href="css/endterm.css">
+    <script src="js/theme.js"></script>
     <script src="assets/vendor/bootstrap.bundle.min.js" defer></script>
     <script src="assets/vendor/jquery-3.7.1.min.js" defer></script>
     <script src="js/data.js" defer></script>
@@ -36,8 +35,7 @@
           <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
             <path
               d="M12 2h8v10h10v8H20v10h-8V20H2v-8h10z"
-              fill="currentColor"
-            />
+              fill="currentColor" />
           </svg>
           <span> SIDEQUEST </span>
         </a>
@@ -73,6 +71,19 @@
             aria-current="page"
             >Emberwake</a
           ><a class="nav-cta" href="community.html#playtest">Plan a session</a>
+          <div class="nav-tools">
+            <a class="nav-link nav-saved" href="index.html#saved-sessions"
+              >Saved <span id="nav-saved-count">0</span></a
+            >
+            <button
+              type="button"
+              id="theme-toggle"
+              class="theme-toggle"
+              aria-pressed="true"
+            >
+              Dark mode
+            </button>
+          </div>
         </div>
       </nav>
     </header>
@@ -99,8 +110,7 @@
           alt="A lone traveler standing among large ancient arches in a mountain valley"
           width="1200"
           height="800"
-          fetchpriority="high"
-        />
+          fetchpriority="high">
         <p class="image-caption">
           Original concept artwork, not a gameplay screenshot.
         </p>
@@ -187,24 +197,36 @@
           Choose a route and optional stops. The trail ribbon shows your plan
           and its total time.
         </p>
-        <div class="work-panel">
-          <label for="route" class="form-label">Route</label
-          ><select class="form-select" id="route">
-            <option value="emberwake">First light · 30 min</option>
-            <option value="emberwake-bridges">Broken bridges · 45 min</option>
-            <option value="emberwake-memories">Lost memories · 60 min</option>
-          </select>
-          <div class="option-row">
-            <label
-              ><input type="checkbox" id="photo-stop" /> Photo stop (+10
-              min)</label
-            ><label
-              ><input type="checkbox" id="lore-stop" /> Read valley memories
-              (+15 min)</label
-            >
+        <div class="feature-intro">
+          <div class="work-panel route-controls">
+            <label for="route" class="form-label">Route</label
+            ><select class="form-select" id="route">
+              <option value="emberwake">First light · 30 min</option>
+              <option value="emberwake-bridges">Broken bridges · 45 min</option>
+              <option value="emberwake-memories">Lost memories · 60 min</option>
+            </select>
+            <div class="option-row">
+              <label
+                ><input type="checkbox" id="photo-stop"> Photo stop (+10
+                min)</label
+              ><label
+                ><input type="checkbox" id="lore-stop"> Read valley memories
+                (+15 min)</label
+              >
+            </div>
+            <ol class="trail-ribbon" id="trail"></ol>
+            <p id="route-total" role="status"></p>
           </div>
-          <ol class="trail-ribbon" id="trail"></ol>
-          <p id="route-total" role="status"></p>
+          <figure class="feature-art">
+            <img
+              id="route-image"
+              src="assets/images/emberwake.webp"
+              alt="Golden ruins in a mountain valley"
+              width="1200"
+              height="800"
+              loading="lazy">
+            <figcaption id="route-caption"></figcaption>
+          </figure>
         </div>
       </section>
       <section class="shell section-pad rule" id="book">
@@ -232,8 +254,7 @@
                   required
                   autocomplete="name"
                   minlength="2"
-                  maxlength="60"
-                />
+                  maxlength="60">
                 <p
                   class="field-error"
                   id="booking-name-error"
@@ -251,8 +272,7 @@
                   aria-describedby="booking-email-error"
                   required
                   autocomplete="email"
-                  maxlength="120"
-                />
+                  maxlength="120">
                 <p
                   class="field-error"
                   id="booking-email-error"
@@ -268,8 +288,7 @@
                   id="booking-date"
                   name="date"
                   aria-describedby="booking-date-error"
-                  required
-                />
+                  required>
                 <p
                   class="field-error"
                   id="booking-date-error"
@@ -288,8 +307,7 @@
                   required
                   min="1"
                   max="6"
-                  value="1"
-                />
+                  value="1">
                 <p
                   class="field-error"
                   id="booking-people-error"
@@ -308,8 +326,7 @@
                   required
                   autocomplete="tel"
                   placeholder="+7 700 123 45 67"
-                  maxlength="24"
-                />
+                  maxlength="24">
                 <p
                   class="field-error"
                   id="booking-phone-error"
@@ -325,8 +342,7 @@
                   id="booking-consent"
                   name="consent"
                   aria-describedby="booking-consent-error"
-                  required
-                />
+                  required>
                 <p
                   class="field-error"
                   id="booking-consent-error"
@@ -377,14 +393,13 @@
               <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
                 <path
                   d="M12 2h8v10h10v8H20v10h-8V20H2v-8h10z"
-                  fill="currentColor"
-                />
+                  fill="currentColor" />
               </svg>
               <span> SIDEQUEST </span>
             </a>
             <p class="footer-description">
               A student game development project.
-              <br />
+              <br>
               IT-2511 · Web Technologies 1
             </p>
           </div>
@@ -393,7 +408,7 @@
             <a href="community.html"> Community </a>
             <a href="studio.html"> The studio </a>
             <a
-              href="https://github.com/Abenovv/EndTerm-WebTechnology"
+              href="https://github.com/Abenovv/Web-technology-Finale"
               target="_blank"
               rel="noopener noreferrer"
             >
