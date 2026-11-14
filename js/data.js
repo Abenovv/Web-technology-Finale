@@ -11,6 +11,10 @@
     "after-hours": "A noodle shop on a rainy street",
     "last-customer":
       "A customer at the lit counter of a noodle shop on a rainy night",
+    tideglass: "A lantern room with brass lenses above a rocky coast",
+    "tideglass-beacon": "A lighthouse beam crossing tidal pools at dusk",
+    mossbound: "A wooden trail through a fern-covered forest",
+    "mossbound-canopy": "A rope walkway among towering trees and mossy branches",
   };
   const sessions = [
     {
@@ -87,7 +91,44 @@
       image: "last-customer",
       description: "Piece together the last customer’s story before sunrise.",
     },
+    {
+      id: "tideglass",
+      title: "Tideglass: Lantern room",
+      world: "Tideglass",
+      genre: "puzzle",
+      minutes: 30,
+      image: "tideglass",
+      description: "Rotate brass lenses to carry a beam across the harbour.",
+    },
+    {
+      id: "tideglass-beacon",
+      title: "Tideglass: Second beacon",
+      world: "Tideglass",
+      genre: "puzzle",
+      minutes: 45,
+      image: "tideglass-beacon",
+      description: "Read the tide and line up two beacons before the turn.",
+    },
+    {
+      id: "mossbound",
+      title: "Mossbound: Fern path",
+      world: "Mossbound",
+      genre: "cozy",
+      minutes: 25,
+      image: "mossbound",
+      description: "Repair an old footpath and leave markers for hikers.",
+    },
+    {
+      id: "mossbound-canopy",
+      title: "Mossbound: Canopy crossing",
+      world: "Mossbound",
+      genre: "cozy",
+      minutes: 40,
+      image: "mossbound-canopy",
+      description: "Reopen a treetop crossing and link it to the forest trail.",
+    },
   ];
+  const worlds = [...new Set(sessions.map((session) => session.world))];
   const activities = [
     {
       id: "a1",
@@ -288,7 +329,7 @@
     )
       return "Describe your idea in 20 to 500 characters.";
     const choices = {
-      game: ["Emberwake", "Orbit Post", "After Hours"],
+      game: worlds,
       format: ["Online", "In person", "Either works"],
       role: ["Design", "Art", "Code", "Testing"],
     };
@@ -299,6 +340,7 @@
   const api = {
     artwork,
     sessions,
+    worlds,
     activities,
     tasks,
     filterSessions,

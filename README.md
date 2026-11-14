@@ -1,8 +1,8 @@
 # SIDEQUEST Final
 
-SIDEQUEST is a five-page student game studio for Web Technologies 1, group IT-2511. The Final continues the Endterm version of Emberwake, Orbit Post and After Hours.
+SIDEQUEST is a five-page student game studio for Web Technologies 1, group IT-2511. The Final keeps Emberwake, Orbit Post and After Hours and adds Tideglass and Mossbound.
 
-[Live site](https://abenovv.github.io/Web-technology-Finale/) · [Final repository](https://github.com/Abenovv/Web-technology-Finale) · [Endterm repository](https://github.com/Abenovv/EndTerm-WebTechnology)
+[Live site](https://abenovv.github.io/Web-technology-Finale/) · [Final repository](https://github.com/Abenovv/Web-technology-Finale) · [Endterm](https://github.com/Abenovv/EndTerm-WebTechnology) · [Midterm](https://github.com/Abenovv/Midterm-Web_Technologies-1stTerm)
 
 ## Open the site
 
@@ -17,11 +17,11 @@ The three demo forms validate their fields inline and save the resulting plan on
 
 ## Team scope
 
-| Member | Endterm contribution and Final review area |
-| --- | --- |
-| Yerkebulan Abenov | Home discovery and Community planning. Review the shared saved counter, Home list and Community artwork. |
-| Assan Nurbergen | Games catalogue and Emberwake planner. Review the saved-only filter, bridge artwork and route preview. |
-| Kuvandyk Bekarys | Studio roadmap and collaboration tools. Review the persistent workload estimate, Studio artwork and integration checks. |
+| Member | Work recorded in Midterm and Endterm | Final defense area |
+| --- | --- | --- |
+| Yerkebulan Abenov | Home, Community, shared styles, session finder and evening planner | Find and save a session, switch theme, and plan a Community evening |
+| Assan Nurbergen | Games, Emberwake, catalogue search and comparison, expedition calculator | Filter the expanded catalogue, compare sessions, and explain the trail total |
+| Kuvandyk Bekarys | Studio, roadmap, collaboration form, and integration checks | Pick a discipline, estimate weeks for selected tasks, and verify saved data |
 
 These Final review areas describe the handoff. The repository history records the actual commits. The release carries forward the Endterm history at `8aec442` into the separate Final repository selected for publication. The rubric specifies the earlier repository.
 
@@ -35,5 +35,4 @@ The suite checks all five pages in both themes at 375, 768 and 1280 px. It also 
 
 - Bootstrap 5.3.8 (MIT) provides the local grid, navigation and form components. jQuery 3.7.1 (MIT) provides sliding help panels, fading feedback and smooth scrolling. Their licenses are in `assets/vendor/`.
 - DM Sans by Colophon Foundry is used under the SIL Open Font License. The license is in `assets/fonts/`.
-- OpenAI image generation was used for the game scenes, community and workbench illustrations, Studio discipline illustrations and project icon.
-- The team directed the design and development and used an AI coding tool for implementation, testing and documentation. Playwright and Prettier support development.
+- OpenAI tools provided image generation for the artwork and icon, and coding assistance for JavaScript, tests and documentation. Playwright and Prettier support development.

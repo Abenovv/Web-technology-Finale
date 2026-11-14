@@ -1,7 +1,7 @@
 .team-card {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 22px;
   height: 100%;
 }
@@ -53,9 +53,9 @@
   font-weight: 700;
   text-align: left;
   transition:
-    transform 160ms ease,
-    background-color 160ms ease,
-    border-color 160ms ease;
+    transform var(--motion-fast) ease-out,
+    background-color var(--motion-fast) ease-out,
+    border-color var(--motion-fast) ease-out;
 }
 
 .discipline-card img {
@@ -77,7 +77,7 @@
 }
 
 .discipline-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .discipline-card[aria-pressed="true"] {
@@ -87,11 +87,6 @@
 .discipline-card[aria-pressed="true"] span {
   color: var(--orange);
   border-color: var(--orange);
-}
-
-.discipline-card:focus-visible {
-  outline: 3px solid var(--orange);
-  outline-offset: 3px;
 }
 
 .roadmap-controls {
@@ -123,10 +118,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .discipline-card {
-    transition: none;
-  }
-
   .discipline-card:hover {
     transform: none;
   }

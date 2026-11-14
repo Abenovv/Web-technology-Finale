@@ -1,24 +1,26 @@
 (function () {
   "use strict";
-  const S = window.Sidequest,
-    U = window.UI,
-    output = document.querySelector("#recommendations");
+  const S = window.Sidequest;
+  const U = window.UI;
+  const output = document.querySelector("#recommendations");
+  const minutesInput = document.querySelector("#minutes");
+  const minutesError = document.querySelector("#minutes-error");
+  const mood = document.querySelector("#mood");
+  const list = document.querySelector("#saved-games");
+  const total = document.querySelector("#saved-total");
+  const clear = document.querySelector("#clear-games");
+
   function recommend() {
-    const minutes = Number(document.querySelector("#minutes").value),
-      invalid = !Number.isInteger(minutes) || minutes < 10 || minutes > 180;
-    document.querySelector("#minutes-error").textContent = invalid
+    const minutes = Number(minutesInput.value);
+    const invalid = !Number.isInteger(minutes) || minutes < 10 || minutes > 180;
+    minutesError.textContent = invalid
       ? "Enter a whole number from 10 to 180."
       : "";
-    document
-      .querySelector("#minutes")
-      .setAttribute("aria-invalid", String(invalid));
+    minutesInput.setAttribute("aria-invalid", String(invalid));
     output.replaceChildren();
     if (invalid) return;
-    const found = S.filterSessions(
-      "",
-      document.querySelector("#mood").value,
-      "short",
-    )
+    const saved = U.savedIds();
+    const found = S.filterSessions("", mood.value, "short")
       .filter((s) => s.minutes <= minutes)
       .slice(0, 3);
     if (!found.length)
@@ -29,48 +31,47 @@
           "empty-state",
         ),
       );
-    else found.forEach((s) => output.append(U.sessionCard(s)));
+    else
+      found.forEach((s) =>
+        output.append(U.sessionCard(s, saved.includes(s.id))),
+      );
     U.reveal(output);
   }
   document.querySelector("#recommend").addEventListener("click", recommend);
-  document.querySelector("#mood").addEventListener("change", recommend);
-  document.querySelector("#minutes").addEventListener("input", recommend);
-  document.querySelector("#minutes").addEventListener("keydown", (e) => {
+  mood.addEventListener("change", recommend);
+  minutesInput.addEventListener("input", recommend);
+  minutesInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") recommend();
   });
-  function renderSaved() {
-    const sessions = S.sessions.filter((s) => U.savedIds().includes(s.id)),
-      list = document.querySelector("#saved-games");
-    list.replaceChildren();
-    document.querySelector("#clear-games").disabled = !sessions.length;
-    if (!sessions.length)
-      list.append(
+
+  function renderSaved(ids) {
+    const sessions = S.sessions.filter((session) => ids.includes(session.id));
+    const keepFocus = list.contains(document.activeElement);
+    const cards = sessions.map((session) => {
+      const card = U.sessionCard(session, true);
+      card.id = "saved-" + session.id;
+      return card;
+    });
+    if (!cards.length) {
+      cards.push(
         U.element(
           "p",
-          "Your shortlist is empty. Save a session above or in Our games.",
+          "Save a session to start your shortlist.",
           "empty-state",
         ),
       );
-    else
-      sessions.forEach((s) => {
-        const card = U.sessionCard(s);
-        card.id = "saved-" + s.id;
-        card.querySelector("[data-save]").addEventListener("click", () => {
-          const next = list.querySelector("[data-save]");
-          if (next) next.focus();
-          else document.querySelector("#saved-total").focus();
-        });
-        list.append(card);
-      });
-    document.querySelector("#saved-total").textContent =
-      `${sessions.length} saved · ${S.total(sessions, "minutes")} minutes in total`;
+    }
+    list.replaceChildren(...cards);
+    clear.disabled = !sessions.length;
+    total.textContent = `${sessions.length} saved · ${S.total(sessions, "minutes")} minutes in total`;
+    if (keepFocus) (list.querySelector("[data-save]") || total).focus();
   }
-  document.querySelector("#clear-games").addEventListener("click", () => {
-    if (U.write("sidequest-sessions", []))
-      document.dispatchEvent(new Event("shortlist-change"));
-    else U.notice("Your browser could not clear your shortlist.");
+  clear.addEventListener("click", () => {
+    if (U.saveIds([])) total.focus();
   });
-  document.addEventListener("shortlist-change", renderSaved);
+  document.addEventListener("shortlist-change", (event) =>
+    renderSaved(event.detail),
+  );
   recommend();
-  renderSaved();
+  renderSaved(U.savedIds());
 })();

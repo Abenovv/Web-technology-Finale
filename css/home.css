@@ -80,9 +80,7 @@
 }
 
 .home-game-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  align-items: stretch;
 }
 
 .home-game-grid .card-body p {
@@ -90,7 +88,21 @@
 }
 
 .home-game-grid .game-card {
-  border-radius: 12px;
+  min-width: 0;
+}
+
+.home-game-grid .card-body {
+  padding: clamp(11px, 1.5vw, 18px);
+}
+
+.home-game-grid .game-card h3 {
+  margin-block: 9px 6px;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+}
+
+.home-game-grid .card-body p {
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 .home-game-grid .game-card h3 a {
@@ -113,9 +125,5 @@
 
   .hero-image {
     object-position: 61% center;
-  }
-
-  .home-game-grid {
-    grid-template-columns: 1fr;
   }
 }

@@ -10,10 +10,10 @@
 }
 .work-panel,
 .saved-box {
-  padding: 24px;
+  padding: clamp(17px, 3vw, 26px);
   border: 1px solid var(--line);
   background: var(--panel);
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 22px;
 }
 .saved-box {
@@ -23,29 +23,29 @@
 .catalog-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-  margin: 24px 0;
+  gap: var(--card-gap);
+  margin: var(--card-gap) 0;
 }
 .catalog-grid > * {
   min-width: 0;
 }
 .game-card {
   transition:
-    transform 0.16s,
-    border-color 0.16s;
+    transform var(--motion-fast) ease-out,
+    border-color var(--motion-fast) ease-out;
 }
-.game-card:hover {
-  transform: translateY(-4px);
+.game-card:is(:hover, :focus-within) {
+  transform: translateY(-3px);
   border-color: var(--orange);
 }
 .button,
 .filter-button {
   transition:
-    background-color 0.16s,
-    transform 0.16s;
+    background-color var(--motion-fast) ease-out,
+    transform var(--motion-fast) ease-out;
 }
-.button:hover {
-  transform: translateY(-1px);
+.button:active:not(:disabled) {
+  transform: translateY(1px);
 }
 .button.secondary {
   background: transparent;
@@ -61,16 +61,23 @@
 }
 .compare-button {
   display: block;
-  margin-top: 12px;
+  margin-top: 6px;
+}
+.card-body [data-save] {
+  margin-top: auto;
 }
 .card-body .text-link {
   display: block;
 }
-.comparison-grid,
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--card-gap);
+}
 .roadmap-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .roadmap-card {
   border-bottom: 1px solid var(--line);
@@ -91,7 +98,8 @@
   color: var(--text);
   background-color: var(--bg);
   border-color: var(--control-border);
-  min-height: 44px;
+  min-height: 46px;
+  border-radius: 8px;
 }
 .form-control:focus,
 .form-select:focus {
@@ -136,12 +144,15 @@
 .help-box {
   border-bottom: 1px solid var(--line);
 }
-.help-box h3 {
+.help-box h3,
+.help-box h2 {
   margin: 0;
 }
 .help-toggle {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
   width: 100%;
   padding: 18px 0;
   color: var(--text);
@@ -151,6 +162,13 @@
 }
 .help-toggle:hover {
   color: var(--orange);
+}
+.help-toggle span {
+  flex: none;
+  transition: transform var(--motion-standard) ease-out;
+}
+.help-toggle[aria-expanded="true"] span {
+  transform: rotate(45deg);
 }
 #page-help {
   color: var(--muted);
@@ -218,7 +236,9 @@ main {
   background: var(--panel);
   border: 1px solid var(--control-border);
   border-radius: 8px;
-  transition: border-color .18s, color .18s;
+  transition:
+    border-color var(--motion-fast),
+    color var(--motion-fast);
 }
 .nav-saved-count {
   color: var(--text);
@@ -230,7 +250,9 @@ main {
 [data-bs-theme="dark"] .theme-toggle .icon-moon {
   display: none;
 }
-[data-bs-theme="dark"] .theme-toggle .icon-sun { display: block; }
+[data-bs-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
 .nav-saved:hover,
 .theme-toggle:hover,
 .theme-toggle[aria-pressed="true"] {
@@ -242,10 +264,12 @@ main {
   flex: none;
 }
 .nav-saved-count.count-changed {
-  animation: count-pop .25s ease-out;
+  animation: count-pop var(--motion-standard) ease-out;
 }
 @keyframes count-pop {
-  50% { transform: scale(1.22); }
+  50% {
+    transform: scale(1.16);
+  }
 }
 .feature-intro,
 .workload-summary {
@@ -264,11 +288,6 @@ main {
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid var(--line);
-}
-.feature-art figcaption {
-  margin-top: 8px;
-  color: var(--muted);
-  font-size: 14px;
 }
 .workload-summary {
   margin: 24px 0;
@@ -300,20 +319,13 @@ main {
   .workload-summary {
     grid-template-columns: 1fr;
   }
-  .work-panel,
-  .saved-box {
-    padding: 18px;
-  }
-  .row-layout {
-    grid-template-columns: 1fr;
-  }
   .button {
     max-width: 100%;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .game-card:hover,
-  .button:hover {
+  .game-card:is(:hover, :focus-within),
+  .button:active:not(:disabled) {
     transform: none;
   }
 }

@@ -48,8 +48,7 @@
       ),
     );
   }
-  function render() {
-    const saved = savedOnly.checked ? U.savedIds() : [];
+  function render(saved = U.savedIds()) {
     const found = S.filterSessions(
         search.value,
         genre.value,
@@ -66,7 +65,7 @@
         ? "Save a session to see it here."
         : "No matches. Try another search or reset the filters.";
     found.forEach((s) => {
-      const card = U.sessionCard(s),
+      const card = U.sessionCard(s, saved.includes(s.id)),
         button = U.element(
           "button",
           compared.includes(s.id) ? "Comparing" : "Compare",
@@ -87,14 +86,13 @@
     });
     comparison();
   }
-  search.addEventListener("input", render);
-  genre.addEventListener("change", render);
-  sort.addEventListener("change", render);
-  savedOnly.addEventListener("change", render);
-  document.addEventListener("shortlist-change", () => {
+  for (const filter of [search, genre, sort, savedOnly]) {
+    filter.addEventListener("input", () => render());
+  }
+  document.addEventListener("shortlist-change", (event) => {
     if (!savedOnly.checked) return;
     const focusedSave = document.activeElement?.matches("[data-save]");
-    render();
+    render(event.detail);
     if (focusedSave)
       (document.querySelector("#catalog [data-save]") || savedOnly).focus();
   });

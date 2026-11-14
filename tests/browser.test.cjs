@@ -329,7 +329,7 @@ test("Internal links and fragments resolve on every page", async () => {
 });
 test("Assan: catalogue search, filter, sort, empty and comparison limit", () =>
   scenario("games.html", async (page) => {
-    assert.equal(await page.locator("#catalog article").count(), 8);
+    assert.equal(await page.locator("#catalog article").count(), 12);
     await page.getByLabel("Search sessions").fill("valley");
     assert.equal(await page.locator("#catalog article").count(), 2);
     await page.getByLabel("Genre", { exact: true }).selectOption("cozy");
@@ -352,7 +352,7 @@ test("Assan: catalogue search, filter, sort, empty and comparison limit", () =>
     assert.ok(
       (await page.locator("#comparison").textContent()).includes("75 minutes"),
     );
-    assert.equal(await page.locator("#catalog button:disabled").count(), 5);
+    assert.equal(await page.locator("#catalog button:disabled").count(), 9);
     await page
       .getByRole("button", {
         name: "Remove Orbit Post: First delivery",
@@ -525,6 +525,33 @@ async function fillForm(page, f) {
   }
   await page.locator("#" + f.prefix + "-consent").check();
 }
+test("New worlds connect Games, the Home shortlist and Community preferences", () =>
+  scenario("games.html", async (page) => {
+    for (const [id, world, image] of [
+      ["tideglass", "Tideglass", "tideglass.webp"],
+      ["mossbound", "Mossbound", "mossbound.webp"],
+    ]) {
+      await page.getByLabel("Search sessions").fill(world);
+      assert.equal(await page.locator("#catalog article").count(), 2);
+      const card = page.locator(`#catalog #${id}`);
+      assert.equal(await card.locator("img").getAttribute("src"), `assets/images/${image}`);
+      await card.locator("[data-save]").click();
+      await card.locator(".text-link").click();
+      await page.waitForLoadState("domcontentloaded");
+      assert.equal(await page.locator("#preferences-game").inputValue(), world);
+      const preferences = forms.find((form) => form.prefix === "preferences");
+      await fillForm(page, { ...preferences, fields: { ...preferences.fields, game: world } });
+      await page.getByRole("button", { name: "Save my preferences" }).click();
+      await page.reload();
+      assert.ok((await page.locator("#saved-summary").textContent()).includes(world));
+      await page.goto(`${base}/games.html`);
+    }
+    await page.locator(".nav-saved").click();
+    await page.waitForLoadState("domcontentloaded");
+    assert.equal(await page.locator("#saved-games article").count(), 2);
+    assert.match(await page.locator("#saved-total").textContent(), /2 saved/);
+  }));
+
 for (const f of forms) {
   test(`Form: ${f.prefix} inline errors, live correction, success reset and persistence`, () =>
     scenario(f.file, async (page) => {

@@ -33,7 +33,7 @@
 .evening-layout {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
-  gap: 20px;
+  gap: var(--card-gap);
   align-items: start;
 }
 
@@ -52,8 +52,8 @@
 #activities article {
   margin-bottom: 0;
   transition:
-    border-color 0.18s ease,
-    background-color 0.18s ease;
+    border-color var(--motion-fast) ease-out,
+    background-color var(--motion-fast) ease-out;
 }
 
 #activities article:has([aria-pressed="true"]) {

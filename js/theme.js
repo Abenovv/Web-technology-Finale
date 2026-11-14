@@ -3,7 +3,8 @@
   const key = "sidequest-theme";
   const root = document.documentElement;
   const prefersLight = matchMedia("(prefers-color-scheme: light)");
-  let choice = null;
+  let choice = savedTheme();
+  let toggle;
 
   function savedTheme() {
     try {
@@ -17,12 +18,9 @@
   function paint() {
     const theme = choice || (prefersLight.matches ? "light" : "dark");
     root.dataset.bsTheme = theme;
-    document
-      .querySelector("#theme-toggle")
-      ?.setAttribute("aria-pressed", String(theme === "dark"));
+    toggle?.setAttribute("aria-pressed", String(theme === "dark"));
   }
 
-  choice = savedTheme();
   paint();
   prefersLight.addEventListener("change", paint);
   addEventListener("storage", (event) => {
@@ -32,8 +30,9 @@
     }
   });
   document.addEventListener("DOMContentLoaded", () => {
+    toggle = document.querySelector("#theme-toggle");
     paint();
-    document.querySelector("#theme-toggle").addEventListener("click", () => {
+    toggle.addEventListener("click", () => {
       choice = root.dataset.bsTheme === "dark" ? "light" : "dark";
       paint();
       if (!window.UI.write(key, choice)) {

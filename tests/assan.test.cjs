@@ -2,14 +2,27 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const S = require("../js/data.js");
 const now = new Date(2026, 10, 4, 20);
-test("Assan: catalogue has eight complete unique records", () => {
-  assert.equal(S.sessions.length, 8);
-  assert.equal(new Set(S.sessions.map((s) => s.id)).size, 8);
+test("Assan: catalogue has twelve complete unique records with artwork", () => {
+  assert.equal(S.sessions.length, 12);
+  assert.equal(new Set(S.sessions.map((s) => s.id)).size, S.sessions.length);
+  assert.equal(new Set(S.sessions.map((s) => s.image)).size, S.sessions.length);
   assert.ok(
     S.sessions.every(
-      (s) => Object.keys(s).length >= 4 && s.minutes > 0 && s.title && s.world,
+      (s) => s.minutes > 0 && s.title && s.world && S.artwork[s.image],
     ),
   );
+});
+test("Assan: the two new worlds work with genre filters and preferences", () => {
+  assert.equal(S.worlds.length, 5);
+  for (const [world, genre] of [
+    ["Mossbound", "cozy"],
+    ["Tideglass", "puzzle"],
+  ]) {
+    const sessions = S.filterSessions(world, genre);
+    assert.equal(sessions.length, 2);
+    assert.ok(sessions.every((session) => session.world === world));
+    assert.equal(S.validate("game", world, "preferences"), "");
+  }
 });
 test("Assan: search ignores case and surrounding spaces", () =>
   assert.equal(S.filterSessions("  VALLEY  ").length, 2));

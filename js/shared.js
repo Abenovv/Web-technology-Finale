@@ -1,9 +1,9 @@
 (function () {
   "use strict";
   const S = window.Sidequest;
-  const speed = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ? 0
-    : 180;
+  const savedKey = "sidequest-sessions";
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const duration = () => (reducedMotion.matches ? 0 : 180);
   function element(tag, text, className) {
     const node = document.createElement(tag);
     if (text !== undefined) node.textContent = text;
@@ -47,23 +47,37 @@
       : [];
   }
   function savedIds() {
-    return readIds("sidequest-sessions", S.sessions);
+    return readIds(savedKey, S.sessions);
   }
-  function toggleSaved(id) {
-    const current = savedIds(),
-      ids = current.includes(id)
-        ? current.filter((x) => x !== id)
-        : [...current, id];
-    if (!write("sidequest-sessions", ids)) {
-      notice(
-        "This browser could not save your choice. Allow local storage and try again.",
-      );
+  function showSavedIds(ids) {
+    document.dispatchEvent(
+      new CustomEvent("shortlist-change", { detail: ids }),
+    );
+  }
+  function saveIds(ids) {
+    if (!write(savedKey, ids)) {
+      notice("Your browser could not save the shortlist.");
       return false;
     }
-    document.dispatchEvent(new Event("shortlist-change"));
+    showSavedIds(ids);
     return true;
   }
-  function sessionCard(session, heading = "h3") {
+  function toggleSaved(id) {
+    const current = savedIds();
+    const next = current.includes(id)
+      ? current.filter((saved) => saved !== id)
+      : [...current, id];
+    return saveIds(next) ? next : null;
+  }
+  function labelSaveButton(button, saved) {
+    button.textContent = saved ? "Remove from shortlist" : "Save session";
+    button.setAttribute("aria-pressed", String(saved));
+    button.setAttribute(
+      "aria-label",
+      `${saved ? "Remove" : "Save"} ${button.dataset.sessionTitle}`,
+    );
+  }
+  function sessionCard(session, saved = savedIds().includes(session.id)) {
     const card = element("article", undefined, "game-card");
     card.id = session.id;
     const image = document.createElement("img");
@@ -76,64 +90,50 @@
     const body = element("div", undefined, "card-body");
     body.append(
       element("span", session.genre, "tag"),
-      element(heading, session.title),
+      element("h3", session.title),
       element("p", session.description),
-      element("p", `${session.minutes} minutes · ${session.world}`),
+      element("p", `${session.minutes} minutes`),
     );
-    const saved = savedIds().includes(session.id),
-      button = element(
-        "button",
-        saved ? "Remove from shortlist" : "Save session",
-        "button secondary",
-      );
+    const button = element("button", undefined, "button secondary");
     button.type = "button";
     button.dataset.save = session.id;
-    button.setAttribute("aria-pressed", String(saved));
-    button.setAttribute(
-      "aria-label",
-      `${saved ? "Remove" : "Save"} ${session.title}`,
-    );
+    button.dataset.sessionTitle = session.title;
+    labelSaveButton(button, saved);
     button.addEventListener("click", () => toggleSaved(session.id));
     body.append(button);
+    const isExpedition = session.world === "Emberwake";
     const link = element(
       "a",
-      session.world === "Emberwake"
-        ? "Plan an expedition →"
-        : "Choose this world →",
+      isExpedition ? "Plan an expedition →" : "Playtest preferences →",
       "text-link",
     );
-    link.href =
-      session.world === "Emberwake"
-        ? `emberwake.html?route=${encodeURIComponent(session.id)}#expedition`
-        : `community.html?game=${encodeURIComponent(session.world)}#playtest`;
+    link.href = isExpedition
+      ? `emberwake.html?route=${encodeURIComponent(session.id)}#expedition`
+      : `community.html?game=${encodeURIComponent(session.world)}#playtest`;
     body.append(link);
     card.append(body);
     return card;
   }
-  function updateSavedControls() {
-    const ids = savedIds();
+  function updateSavedControls(ids) {
     const count = document.querySelector("#nav-saved-count");
     if (count.textContent !== String(ids.length)) {
       count.textContent = ids.length;
       count.classList.remove("count-changed");
-      requestAnimationFrame(() => count.classList.add("count-changed"));
+      if (!reducedMotion.matches) {
+        requestAnimationFrame(() => count.classList.add("count-changed"));
+      }
     }
     document.querySelectorAll("[data-save]").forEach((button) => {
-      const saved = ids.includes(button.dataset.save),
-        session = S.sessions.find((s) => s.id === button.dataset.save);
-      button.textContent = saved ? "Remove from shortlist" : "Save session";
-      button.setAttribute("aria-pressed", String(saved));
-      button.setAttribute(
-        "aria-label",
-        `${saved ? "Remove" : "Save"} ${session.title}`,
-      );
+      labelSaveButton(button, ids.includes(button.dataset.save));
     });
   }
-  updateSavedControls();
-  document.addEventListener("shortlist-change", updateSavedControls);
+  updateSavedControls(savedIds());
+  document.addEventListener("shortlist-change", (event) =>
+    updateSavedControls(event.detail),
+  );
   window.addEventListener("storage", (event) => {
-    if (event.key === "sidequest-sessions" || event.key === null) {
-      document.dispatchEvent(new Event("shortlist-change"));
+    if (event.key === savedKey || event.key === null) {
+      showSavedIds(savedIds());
     }
   });
   // Finish the previous effect and clear its queue before a repeated click.
@@ -142,129 +142,125 @@
     this.setAttribute("aria-expanded", String(open));
     const panel = $("#" + this.getAttribute("aria-controls"));
     panel.stop(true, true);
-    if (open) panel.removeAttr("hidden").hide().slideDown(speed);
-    else panel.slideUp(speed, () => panel.attr("hidden", ""));
+    if (open) panel.removeAttr("hidden").hide().slideDown(duration());
+    else panel.slideUp(duration(), () => panel.attr("hidden", ""));
   });
   $("[data-scroll]").on("click", function (event) {
     event.preventDefault();
     const target = document.querySelector(this.getAttribute("href"));
-    $("html, body")
-      .stop(true)
-      .animate(
-        { scrollTop: 0 },
-        speed,
-      );
+    $("html, body").stop(true).animate({ scrollTop: 0 }, duration());
     target.setAttribute("tabindex", "-1");
     target.focus({ preventScroll: true });
   });
 
   const navigation = document.querySelector("#main-navigation");
   const menu = document.querySelector(".navbar-toggler");
+  const collapse = bootstrap.Collapse.getOrCreateInstance(navigation, {
+    toggle: false,
+  });
   navigation.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || !navigation.classList.contains("show")) return;
-    bootstrap.Collapse.getOrCreateInstance(navigation, { toggle: false }).hide();
+    if (event.key !== "Escape" || !navigation.classList.contains("show"))
+      return;
+    collapse.hide();
     menu.focus();
   });
   navigation.querySelectorAll('a[href*="#"]').forEach((link) => {
     link.addEventListener("click", () => {
-      if (!navigation.classList.contains("show")) return;
-      bootstrap.Collapse.getOrCreateInstance(navigation, { toggle: false }).hide();
+      collapse.hide();
     });
   });
   function reveal(node) {
-    $(node).stop(true, true).removeAttr("hidden").hide().fadeIn(speed);
+    $(node).stop(true, true).removeAttr("hidden").hide().fadeIn(duration());
   }
   function bindForm(form, onValid) {
     if (!form) return;
-    const fields = [...form.querySelectorAll("input,select,textarea")],
-      feedback = form.querySelector(".form-feedback");
+    const fields = [...form.querySelectorAll("input,select,textarea")];
+    const feedback = form.querySelector(".form-feedback");
     let attempted = false;
-    function check(field) {
-      const error = S.validate(
-        field.name,
-        field.type === "checkbox" ? field.checked : field.value,
-        form.dataset.form,
-      );
+    function valueOf(field) {
+      return field.type === "checkbox" ? field.checked : field.value.trim();
+    }
+    function showFieldError(field, error) {
       document.getElementById(field.id + "-error").textContent = error;
       field.classList.toggle("is-invalid", Boolean(error));
       field.setAttribute("aria-invalid", String(Boolean(error)));
+    }
+    function check(field) {
+      const error = S.validate(field.name, valueOf(field), form.dataset.form);
+      showFieldError(field, error);
       return !error;
     }
-    fields.forEach((field) =>
-      ["input", "change"].forEach((event) =>
-        field.addEventListener(event, () => {
-          if (attempted || field.dataset.touched) check(field);
-          $(feedback).stop(true, true).hide().attr("hidden", "");
-        }),
-      ),
-    );
-    fields.forEach((field) =>
+    function hideFeedback() {
+      $(feedback).stop(true, true).hide().attr("hidden", "");
+    }
+    for (const field of fields) {
+      function onEdit() {
+        if (attempted || field.dataset.touched) check(field);
+        hideFeedback();
+      }
+      field.addEventListener("input", onEdit);
+      field.addEventListener("change", onEdit);
       field.addEventListener("blur", () => {
         field.dataset.touched = "true";
         check(field);
-      }),
-    );
+      });
+    }
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       attempted = true;
-      const outcomes = fields.map(check);
-      if (outcomes.includes(false)) {
-        $(feedback).stop(true, true).hide().attr("hidden", "");
-        fields[outcomes.indexOf(false)].focus();
+      const invalidFields = fields.filter((field) => !check(field));
+      if (invalidFields.length) {
+        hideFeedback();
+        invalidFields[0].focus();
         return;
       }
       const data = Object.fromEntries(
-        fields.map((field) => [
-          field.name,
-          field.type === "checkbox" ? field.checked : field.value.trim(),
-        ]),
+        fields.map((field) => [field.name, valueOf(field)]),
       );
       const result = onValid(data);
-      if (!result.ok) {
-        feedback.textContent = result.message;
-        feedback.classList.add("feedback-error");
-        reveal(feedback);
-        return;
+      if (result.ok) {
+        form.reset();
+        attempted = false;
+        for (const field of fields) {
+          delete field.dataset.touched;
+          showFieldError(field, "");
+          field.removeAttribute("aria-invalid");
+        }
+        form.dispatchEvent(new Event("local-save"));
       }
-      form.reset();
-      attempted = false;
-      fields.forEach((field) => {
-        delete field.dataset.touched;
-        field.classList.remove("is-invalid");
-        field.removeAttribute("aria-invalid");
-        document.getElementById(field.id + "-error").textContent = "";
-      });
-      form.dispatchEvent(new Event("local-save"));
-      feedback.classList.remove("feedback-error");
+      feedback.classList.toggle("feedback-error", !result.ok);
       feedback.textContent = result.message;
       reveal(feedback);
     });
   }
   const wishlist = document.querySelector("#wishlist-button");
   if (wishlist) {
-    function refresh() {
-      const saved = savedIds().includes("emberwake");
+    function refresh(ids) {
+      const saved = ids.includes("emberwake");
       wishlist.textContent = saved ? "Saved to my list ✓" : "Add to my list +";
       wishlist.setAttribute("aria-pressed", String(saved));
     }
     try {
       if (
         localStorage.getItem("sidequest-emberwake") === "saved" &&
-        localStorage.getItem("sidequest-sessions") === null
+        localStorage.getItem(savedKey) === null
       )
-        write("sidequest-sessions", ["emberwake"]);
+        write(savedKey, ["emberwake"]);
     } catch {
       /* Browsing still works when storage is unavailable. */
     }
-    document.dispatchEvent(new Event("shortlist-change"));
-    refresh();
-    document.addEventListener("shortlist-change", refresh);
+    document.addEventListener("shortlist-change", (event) =>
+      refresh(event.detail),
+    );
+    showSavedIds(savedIds());
     wishlist.addEventListener("click", () => {
-      if (!toggleSaved("emberwake")) return;
-      document.querySelector("#wishlist-message").textContent =
-        savedIds().includes("emberwake")
-          ? "Saved on this device."
-          : "Removed from your list.";
+      const ids = toggleSaved("emberwake");
+      if (!ids) return;
+      document.querySelector("#wishlist-message").textContent = ids.includes(
+        "emberwake",
+      )
+        ? "Saved on this device."
+        : "Removed from your list.";
     });
   }
   window.UI = {
@@ -273,6 +269,7 @@
     write,
     readIds,
     savedIds,
+    saveIds,
     sessionCard,
     bindForm,
     reveal,

@@ -13,6 +13,10 @@
 }
 
 :root {
+  --section-space: clamp(32px, 5vw, 56px);
+  --card-gap: clamp(12px, 2vw, 22px);
+  --motion-fast: 160ms;
+  --motion-standard: 240ms;
   --bg: #141719;
   --panel: #1d2226;
   --text: #f2f2f2;
@@ -166,7 +170,7 @@ textarea:focus-visible {
 }
 
 .navbar {
-  padding: 12px 0;
+  padding-block: 10px;
 }
 
 .brand {
@@ -174,7 +178,7 @@ textarea:focus-visible {
   align-items: center;
   gap: 10px;
   font-size: 19px;
-  letter-spacing: .07em;
+  letter-spacing: 0.07em;
   font-weight: 700;
   color: var(--text);
 }
@@ -187,7 +191,7 @@ textarea:focus-visible {
 
 .navbar-nav {
   margin-inline: auto;
-  gap: 3px;
+  gap: 4px;
 }
 
 .nav-link {
@@ -196,10 +200,15 @@ textarea:focus-visible {
 }
 
 .site-header .navbar-nav .nav-link {
-  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px clamp(9px, 1vw, 14px);
   border-radius: 8px;
   white-space: nowrap;
-  transition: background-color .18s, color .18s;
+  transition:
+    background-color var(--motion-fast),
+    color var(--motion-fast);
 }
 
 .site-header .navbar-nav .nav-link:hover,
@@ -220,10 +229,13 @@ textarea:focus-visible {
   color: var(--text);
   border: 1px solid var(--control-border);
   border-radius: 8px;
-  padding: 8px 11px;
+  min-width: 44px;
+  justify-content: center;
+  padding: 8px;
 }
 
-main [id], main {
+main [id],
+main {
   scroll-margin-top: 86px;
 }
 
@@ -265,7 +277,7 @@ main [id], main {
 }
 
 .section-pad {
-  padding: 40px 0;
+  padding-block: var(--section-space);
 }
 
 .rule {
@@ -285,7 +297,7 @@ main [id], main {
 }
 
 .page-top {
-  padding: 38px 0 28px;
+  padding-block: var(--section-space) calc(var(--section-space) * 0.7);
 }
 
 .info-section {
@@ -294,11 +306,21 @@ main [id], main {
 
 .row-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 50px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--section-space);
+}
+
+.home-game-grid,
+.game-worlds {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--card-gap);
 }
 
 .game-card {
+  display: flex;
+  flex-direction: column;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -313,7 +335,11 @@ main [id], main {
 }
 
 .card-body {
-  padding: 20px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(16px, 2vw, 22px);
 }
 
 .card-body h2,
@@ -332,12 +358,6 @@ main [id], main {
   color: var(--text);
   border-radius: 3px;
   font-size: 12px;
-}
-
-.image-caption {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 10px;
 }
 
 .table {
@@ -405,8 +425,25 @@ main [id], main {
   .navbar-collapse {
     padding-top: 12px;
   }
+  .navbar-collapse.show {
+    max-height: calc(100dvh - 65px);
+    overflow-y: auto;
+    padding-inline: 4px;
+  }
   .navbar-nav {
     gap: 4px;
+  }
+  .home-game-grid,
+  .game-worlds {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .home-game-grid > *,
+  .game-worlds > * {
+    grid-column: span 2;
+  }
+  .home-game-grid > :nth-child(4),
+  .game-worlds > :nth-child(4) {
+    grid-column: 2 / span 2;
   }
 }
 
@@ -423,16 +460,9 @@ main [id], main {
   h3 {
     font-size: 21px;
   }
-  .section-pad {
-    padding: 30px 0;
-  }
-  .page-top {
-    padding: 28px 0 20px;
-  }
   .section-heading {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 6px 12px;
   }
   .row-layout {
     grid-template-columns: 1fr;
@@ -442,6 +472,18 @@ main [id], main {
   .table th {
     padding: 12px 5px;
     font-size: 12px;
+  }
+  .home-game-grid,
+  .game-worlds {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .home-game-grid > :nth-child(4),
+  .game-worlds > :nth-child(4) {
+    grid-column: span 2;
+  }
+  .home-game-grid > :nth-child(5),
+  .game-worlds > :nth-child(5) {
+    grid-column: 2 / span 2;
   }
 }
 

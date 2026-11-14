@@ -3,10 +3,7 @@
 }
 
 .game-worlds {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 22px;
+  margin-top: var(--card-gap);
 }
 
 .game-world {
@@ -32,7 +29,7 @@
 .game-world img {
   object-fit: cover;
   z-index: -2;
-  transition: transform 220ms ease;
+  transition: transform var(--motion-standard) ease-out;
 }
 
 .game-world::after {
@@ -47,7 +44,7 @@
   font-weight: 700;
 }
 
-.game-world:hover img {
+.game-world:is(:hover, :focus-visible) img {
   transform: scale(1.05);
 }
 
@@ -80,13 +77,13 @@
 }
 
 #catalog .game-card {
-  animation: game-card-in 180ms ease-out;
+  animation: game-card-in var(--motion-standard) ease-out;
 }
 
 @keyframes game-card-in {
   from {
-    opacity: 0.4;
-    transform: translateY(4px);
+    opacity: 0.66;
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -95,21 +92,17 @@
 }
 
 @media (max-width: 575px) {
-  .game-worlds {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
   .game-world {
-    height: 68px;
+    height: 90px;
+  }
+  .game-world span {
+    padding: 8px 10px;
+    font-size: 0.875rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .game-world:hover img {
+  .game-world:is(:hover, :focus-visible) img {
     transform: none;
-  }
-  #catalog .game-card {
-    animation: none;
   }
 }

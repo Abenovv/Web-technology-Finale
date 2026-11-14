@@ -86,7 +86,7 @@
     else U.notice("Your browser could not clear your evening.");
   });
   const game = new URLSearchParams(location.search).get("game");
-  if (["Emberwake", "Orbit Post", "After Hours"].includes(game))
+  if (S.worlds.includes(game))
     document.querySelector("#preferences-game").value = game;
   function showSaved() {
     const p = U.read("sidequest-playtest", null),
@@ -94,7 +94,7 @@
     box.hidden =
       !p ||
       typeof p.name !== "string" ||
-      !["Emberwake", "Orbit Post", "After Hours"].includes(p.game);
+      !S.worlds.includes(p.game);
     if (!box.hidden)
       document.querySelector("#saved-summary").textContent =
         `${p.name} · ${p.game} · ${p.format || "Online"}${p.minutes ? " · " + p.minutes + " minutes" : ""}`;
