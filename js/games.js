@@ -36,6 +36,10 @@
       remove.addEventListener("click", () => {
         compared = compared.filter((id) => id !== s.id);
         render();
+        const compareButton = document
+          .getElementById(s.id)
+          ?.querySelector(".compare-button");
+        (compareButton || search).focus();
       });
       card.append(remove);
       list.append(card);
