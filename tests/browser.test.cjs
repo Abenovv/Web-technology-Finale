@@ -358,8 +358,15 @@ test("Assan: catalogue search, filter, sort, empty and comparison limit", () =>
         name: "Remove Orbit Post: First delivery",
         exact: true,
       })
-      .click();
+      .press("Enter");
     assert.equal(await page.locator("#catalog button:disabled").count(), 0);
+    assert.equal(
+      await page.evaluate(() => document.activeElement.getAttribute("aria-label")),
+      "Compare Orbit Post: First delivery",
+    );
+    await page.getByLabel("Search sessions").fill("unfindable");
+    await page.getByRole("button", { name: "Remove Emberwake: First light", exact: true }).press("Enter");
+    assert.equal(await page.evaluate(() => document.activeElement.id), "search");
   }));
 test("Yerkebulan: home recommendations, invalid input, shortlist persistence and clear", () =>
   scenario("index.html", async (page) => {
