@@ -57,6 +57,7 @@
     updateTotal();
   }
   function updateTotal() {
+    document.querySelector("#reset-production").disabled = selected.length === 0;
     const tasks = S.tasks.filter((t) => selected.includes(t.id));
     const total = S.total(tasks, "hours");
     document.querySelector("#production-total").textContent =
@@ -87,6 +88,7 @@
     }
     selected = [];
     render();
+    disciplineFilter.focus();
   });
   const date = document.querySelector("#collaboration-start"),
     now = new Date();
