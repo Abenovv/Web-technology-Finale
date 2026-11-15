@@ -90,37 +90,67 @@
     render();
     disciplineFilter.focus();
   });
-  const date = document.querySelector("#collaboration-start"),
-    now = new Date();
-  date.min = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  function showSaved() {
-    const b = U.read("sidequest-collaboration", null),
-      box = document.querySelector("#collaboration-saved");
-    box.replaceChildren();
-    box.hidden =
-      !b ||
-      typeof b.name !== "string" ||
-      !["Design", "Art", "Code", "Testing"].includes(b.role) ||
-      !Number.isInteger(b.weeks);
-    if (box.hidden) return;
-    box.append(
-      U.element("h3", "Your collaboration brief"),
-      U.element(
-        "p",
-        `${b.name} · ${b.role} · ${b.hours} hours/week · approximately ${b.weeks} weeks for ${b.total} hours of tasks.`,
-      ),
-    );
-    const clear = U.element(
-      "button",
-      "Clear collaboration brief",
-      "button secondary",
-    );
-    clear.addEventListener("click", () => {
-      if (U.write("sidequest-collaboration", null)) showSaved();
-      else U.notice("Your browser could not clear this brief.");
-    });
-    box.append(clear);
+  const briefKey = "sidequest-collaboration";
+  const date = document.querySelector("#collaboration-start");
+  const today = new Date();
+  const limit = new Date(today);
+  limit.setFullYear(limit.getFullYear() + 1);
+  function localDate(day) {
+    return [
+      day.getFullYear(),
+      String(day.getMonth() + 1).padStart(2, "0"),
+      String(day.getDate()).padStart(2, "0"),
+    ].join("-");
   }
+  date.min = localDate(today);
+  date.max = localDate(limit);
+
+  const history = document.querySelector("#collaboration-history");
+  const saved = document.querySelector("#collaboration-saved");
+  const empty = document.querySelector("#collaboration-empty");
+  const historyError = document.querySelector("#collaboration-history-error");
+  function readBriefs() {
+    const stored = U.read(briefKey, []);
+    const entries = Array.isArray(stored) ? stored : [stored];
+    return entries.filter(
+      (brief) =>
+        brief &&
+        typeof brief.name === "string" &&
+        ["Design", "Art", "Code", "Testing"].includes(brief.role) &&
+        Number.isInteger(brief.hours) &&
+        Number.isInteger(brief.total) &&
+        Number.isInteger(brief.weeks),
+    );
+  }
+  function showSaved(briefs) {
+    history.replaceChildren();
+    empty.hidden = briefs.length > 0;
+    saved.hidden = briefs.length === 0;
+    historyError.textContent = "";
+    for (const brief of briefs) {
+      const item = U.element("li");
+      item.append(
+        U.element("h4", `${brief.name} · ${brief.role}`),
+        U.element(
+          "p",
+          `${brief.hours} hours/week · ${brief.weeks} ${brief.weeks === 1 ? "week" : "weeks"} for ${brief.total} hours of tasks`,
+        ),
+      );
+      if (typeof brief.start === "string" && brief.start)
+        item.append(U.element("p", `Preferred start: ${brief.start}`));
+      if (typeof brief.message === "string" && brief.message)
+        item.append(U.element("p", brief.message));
+      history.append(item);
+    }
+  }
+  document.querySelector("#clear-collaboration").addEventListener("click", () => {
+    if (U.write(briefKey, [])) {
+      showSaved([]);
+      document.querySelector("#brief-history-title").focus();
+    } else {
+      historyError.textContent = "Your browser could not clear the brief history.";
+    }
+  });
   U.bindForm(document.querySelector("#collaboration-form"), (data) => {
     const hours = Number(data.hours),
       total = S.total(
@@ -136,18 +166,19 @@
         start: data.start,
         message: data.message,
       };
-    if (!U.write("sidequest-collaboration", b))
+    const briefs = [b, ...readBriefs()];
+    if (!U.write(briefKey, briefs))
       return {
         ok: false,
         message:
           "Your browser could not save this brief. Your form has been kept.",
       };
-    showSaved();
+    showSaved(briefs);
     return {
       ok: true,
       message: `Brief saved. Allow about ${b.weeks} weeks at ${hours} hours per week. No email was sent or stored.`,
     };
   });
   render();
-  showSaved();
+  showSaved(readBriefs());
 })();

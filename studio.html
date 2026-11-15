@@ -222,9 +222,20 @@
         <div class="row-layout">
           <div>
             <p>
-              Pick a discipline and set your weekly hours. The brief stays on
+              Pick a discipline and set your weekly hours. Briefs stay on
               this device.
             </p>
+            <section class="saved-box" aria-labelledby="brief-history-title">
+              <h3 id="brief-history-title" tabindex="-1">Brief history</h3>
+              <p id="collaboration-empty" role="status">No briefs saved yet.</p>
+              <div id="collaboration-saved" hidden>
+                <ol class="brief-list" id="collaboration-history"></ol>
+                <button class="button secondary" id="clear-collaboration" type="button">
+                  Clear brief history
+                </button>
+              </div>
+              <p class="field-error" id="collaboration-history-error" role="status"></p>
+            </section>
           </div>
           <div class="work-panel">
             <form id="collaboration-form" data-form="collaboration" novalidate>
@@ -322,26 +333,30 @@
                   class="form-control"
                   id="collaboration-message"
                   name="message"
-                  aria-describedby="collaboration-message-error"
+                  aria-describedby="collaboration-message-hint collaboration-message-error"
                   required
                   minlength="20"
                   rows="3"
                   maxlength="500"></textarea>
+                <p class="form-text" id="collaboration-message-hint">
+                  Use 20 to 500 characters.
+                </p>
                 <p
                   class="field-error"
                   id="collaboration-message-error"
                   aria-live="polite"></p>
               </div>
-              <div class="mb-3">
-                <label class="form-label" for="collaboration-consent"
-                  >Save my choices on this device</label
-                ><input
+              <div class="form-check mb-3">
+                <input
                   class="form-check-input"
                   type="checkbox"
                   id="collaboration-consent"
                   name="consent"
                   aria-describedby="collaboration-consent-error"
                   required>
+                <label class="form-check-label" for="collaboration-consent">
+                  Save my choices on this device
+                </label>
                 <p
                   class="field-error"
                   id="collaboration-consent-error"
@@ -354,7 +369,6 @@
             </form>
           </div>
         </div>
-        <div class="saved-box" id="collaboration-saved" hidden></div>
       </section>
       <section class="shell section-pad rule">
         <h2>Help</h2>

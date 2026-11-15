@@ -589,10 +589,14 @@ for (const f of forms) {
       assert.ok(await page.locator(f.saved).isVisible());
       assert.equal(
         await page.evaluate(
-          (key) => JSON.parse(localStorage.getItem(key)).email,
+          (key) => {
+            const value = JSON.parse(localStorage.getItem(key));
+            const entries = Array.isArray(value) ? value : [value];
+            return entries.some((entry) => "email" in entry);
+          },
           f.key,
         ),
-        undefined,
+        false,
       );
       await page.reload();
       assert.ok(await page.locator(f.saved).isVisible());
@@ -627,6 +631,53 @@ for (const f of forms) {
       );
     }));
 }
+test("Studio brief history keeps an earlier brief and newer submissions in the left column", () =>
+  scenario("studio.html", async (page) => {
+    const f = forms.find((form) => form.prefix === "collaboration");
+    const form = page.locator("#collaboration-form");
+    const rows = page.locator("#collaboration-history > li");
+    const submit = page.getByRole("button", { name: f.button, exact: true });
+    const history = page.getByRole("region", { name: "Brief history" });
+    assert.ok(await history.getByText("No briefs saved yet.").isVisible());
+    assert.ok((await history.boundingBox()).x < (await form.boundingBox()).x);
+    await page.evaluate((key) => {
+      localStorage.setItem(key, JSON.stringify({
+        name: "Earlier brief",
+        role: "Design",
+        hours: 5,
+        total: 12,
+        weeks: 3,
+        message: "An earlier plan saved before the history update.",
+      }));
+    }, f.key);
+    await page.reload();
+    assert.equal(await rows.first().locator("h4").textContent(), "Earlier brief · Design");
+
+    await fillForm(page, f);
+    await form.locator("[name=start]").fill("2000-01-01");
+    await submit.click();
+    assert.match(await page.locator("#collaboration-start-error").textContent(), /within the next year/);
+    assert.equal(await rows.count(), 1);
+
+    for (const name of ["First new brief", "Second new brief"]) {
+      await fillForm(page, f);
+      await form.locator("[name=name]").fill(name);
+      await submit.click();
+    }
+    await page.reload();
+    assert.deepEqual(await rows.locator("h4").allTextContents(), [
+      "Second new brief · Code",
+      "First new brief · Code",
+      "Earlier brief · Design",
+    ]);
+    assert.match(await rows.first().textContent(), /Preferred start:/);
+    assert.match(await rows.first().textContent(), /keyboard movement/);
+    await history.getByRole("button", { name: "Clear brief history" }).click();
+    assert.ok(await history.getByText("No briefs saved yet.").isVisible());
+    assert.equal(await page.evaluate(() => document.activeElement.id), "brief-history-title");
+    await page.reload();
+    assert.equal(await rows.count(), 0);
+  }));
 test("All pages: repeated accordion clicks, fade and keyboard smooth scroll", async () => {
   for (const file of pages)
     await scenario(file, async (page) => {
