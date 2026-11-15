@@ -473,7 +473,11 @@ test("Bekarys: roadmap filter preserves selected tasks and calculated total", ()
         "12 estimated hours",
       ),
     );
-    await page.getByRole("button", { name: "Reset task selection" }).click();
+    const reset = page.getByRole("button", { name: "Reset task selection" });
+    assert.ok(await reset.isEnabled());
+    await reset.press("Enter");
+    assert.ok(await reset.isDisabled());
+    assert.equal(await page.evaluate(() => document.activeElement.id), "discipline");
     assert.ok(
       (await page.locator("#production-total").textContent()).includes(
         "0 estimated hours",
